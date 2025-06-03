@@ -1,21 +1,20 @@
 import { useRoutes } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react';
 import { Toaster } from 'react-hot-toast';
-import NavBar from './components/NavBar';
+import { Suspense } from 'react';
+import Loading from './components/common/Loading';
+import routes from './routes';
 
 function App() {
+  const element = useRoutes(routes);
 
   return (
     <>
-      <ChakraProvider>
-        <NavBar />
-        <Toaster
-          position='bottom-right'
-          reverseOrder={false}
-        />
-      </ChakraProvider>
+      <Suspense fallback={<Loading />}>
+        {element}
+      </Suspense>
+      <Toaster position="top-center" reverseOrder={false} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
