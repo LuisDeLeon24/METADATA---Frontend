@@ -59,3 +59,19 @@ export const register = async (data) => {
     }
 }
 
+export const getAnalyses = async () => {
+  try {
+    const res = await apiClient.get('/analysis/');
+    return {
+      data: res.data.data,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
