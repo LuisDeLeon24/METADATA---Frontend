@@ -45,7 +45,7 @@ export const useLogin = () => {
             }
         })
 
-        navigate('/dashboard')
+        navigate('/')
     }
     return {
         login,

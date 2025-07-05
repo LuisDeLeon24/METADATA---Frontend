@@ -13,7 +13,6 @@ apiClient.interceptors.request.use(
         if (useUserDetails) {
             const token = JSON.parse(useUserDetails).token
             config.headers['x-token'] = token;
-            config.headers['x-token'] = token;
         }
 
         return config;
