@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Flex, Button, Text, HStack, IconButton, useDisclosure, VStack, Collapse } from '@chakra-ui/react';
 import { BrainCog, Menu, X, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,26 +34,26 @@ const Navbar = () => {
       <Container maxW="container.xl">
         <Flex py={4} align="center" justify="space-between">
           {/* Logo */}
-          <Flex 
-            align="center" 
+          <Flex
+            align="center"
             cursor="pointer"
             transition="transform 0.2s"
             _hover={{ transform: 'scale(1.05)' }}
           >
-            <Box 
-              p={2} 
-              bg="brand.500" 
-              borderRadius="xl" 
-              color="white" 
+            <Box
+              p={2}
+              bg="brand.500"
+              borderRadius="xl"
+              color="white"
               mr={3}
               boxShadow="0 0 20px rgba(38, 131, 244, 0.3)"
             >
               <BrainCog size={24} />
             </Box>
-            <Text 
-              fontSize="xl" 
-              fontWeight="bold" 
-              bgGradient="linear(to-r, brand.400, accent.400)" 
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              bgGradient="linear(to-r, brand.400, accent.400)"
               bgClip="text"
               letterSpacing="tight"
             >
@@ -66,24 +67,26 @@ const Navbar = () => {
             <NavButton>How It Works</NavButton>
             <NavButton>Pricing</NavButton>
             <NavButton>About</NavButton>
-            <Button
-              variant="primary"
-              size="lg"
-              px={8}
-              py={6}
-              fontSize="md"
-              fontWeight="bold"
-              borderRadius="xl"
-              bgGradient="linear(to-r, brand.500, accent.500)"
-              _hover={{
-                bgGradient: "linear(to-r, brand.600, accent.600)",
-                transform: "translateY(-2px)",
-                boxShadow: "xl"
-              }}
-              transition="all 0.3s ease"
-            >
-              Try Now
-            </Button>
+            <Link to='/Login'>
+              <Button
+                variant="primary"
+                size="lg"
+                px={8}
+                py={6}
+                fontSize="md"
+                fontWeight="bold"
+                borderRadius="xl"
+                bgGradient="linear(to-r, brand.500, accent.500)"
+                _hover={{
+                  bgGradient: "linear(to-r, brand.600, accent.600)",
+                  transform: "translateY(-2px)",
+                  boxShadow: "xl"
+                }}
+                transition="all 0.3s ease"
+              >
+                Iniciar Sesion
+              </Button>
+            </Link>
           </HStack>
 
           {/* Mobile Menu Button */}
