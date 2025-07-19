@@ -1,7 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Flex, Button, Text, HStack, IconButton, useDisclosure, VStack, Collapse } from '@chakra-ui/react';
-import { BrainCog, Menu, X, ChevronDown } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Flex,
+  Button,
+  Text,
+  HStack,
+  IconButton,
+  useDisclosure,
+  VStack,
+  Collapse,
+  Badge
+} from '@chakra-ui/react';
+import { BrainCog, Menu, X, Sparkles, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
+const MotionButton = motion(Button);
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,164 +34,311 @@ const Navbar = () => {
   }, []);
 
   return (
-    <Box
+    <MotionBox
       as="nav"
       position="fixed"
       top="0"
       left="0"
       right="0"
       zIndex="1000"
-      bg={isScrolled ? 'rgba(18, 22, 33, 0.95)' : 'transparent'}
-      backdropFilter={isScrolled ? 'blur(12px)' : 'none'}
-      borderBottom={isScrolled ? '1px solid' : 'none'}
-      borderColor="dark.700"
-      transition="all 0.3s ease"
-      boxShadow={isScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      bg={isScrolled
+        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85))'
+        : 'linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2))'
+      }
+      backdropFilter={isScrolled ? 'blur(20px) saturate(180%)' : 'blur(10px) saturate(120%)'}
+      borderBottom={isScrolled ? '1px solid' : '1px solid transparent'}
+      borderColor="rgba(147, 51, 234, 0.2)"
+      boxShadow={isScrolled
+        ? '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.1)'
+        : '0 4px 16px rgba(16, 16, 23, 0.4)'
+      }
+      _before={{
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.05), transparent)',
+        pointerEvents: 'none'
+      }}
     >
       <Container maxW="container.xl">
         <Flex py={4} align="center" justify="space-between">
-          {/* Logo */}
-          <Flex
+          {/* Logo Mejorado */}
+          <MotionFlex
             align="center"
             cursor="pointer"
-            transition="transform 0.2s"
-            _hover={{ transform: 'scale(1.05)' }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Box
-              p={2}
-              bg="brand.500"
-              borderRadius="xl"
+            <MotionBox
+              p={3}
+              bg="linear-gradient(135deg, #9333ea, #7c3aed, #6366f1)"
+              borderRadius="2xl"
               color="white"
               mr={3}
-              boxShadow="0 0 20px rgba(38, 131, 244, 0.3)"
+              position="relative"
+              whileHover={{
+                boxShadow: "0 0 30px rgba(147, 51, 234, 0.6), 0 0 60px rgba(147, 51, 234, 0.3)",
+                rotate: [0, -5, 5, 0]
+              }}
+              transition={{ duration: 0.6 }}
+              _before={{
+                content: '""',
+                position: 'absolute',
+                top: '-2px',
+                left: '-2px',
+                right: '-2px',
+                bottom: '-2px',
+                background: 'linear-gradient(45deg, #9333ea, #7c3aed, #6366f1, #9333ea)',
+                borderRadius: '2xl',
+                zIndex: -1,
+                opacity: 0.7,
+                filter: 'blur(8px)'
+              }}
             >
-              <BrainCog size={24} />
-            </Box>
-            <Text
-              fontSize="xl"
-              fontWeight="bold"
-              bgGradient="linear(to-r, brand.400, accent.400)"
-              bgClip="text"
-              letterSpacing="tight"
-            >
-              MetaData
-            </Text>
-          </Flex>
+              <BrainCog size={28} />
+            </MotionBox>
+            <VStack spacing={0} align="start">
+              <Text
+                fontSize="2xl"
+                fontWeight="900"
+                bgGradient="linear(to-r, #ffffff, #e5e5e5, #9333ea)"
+                bgClip="text"
+                letterSpacing="tight"
+                lineHeight="1"
+              >
+                MetaData
+              </Text>
+              <Text
+                fontSize="xs"
+                color="purple.300"
+                fontWeight="500"
+                letterSpacing="wide"
+              >
+                AI POWERED
+              </Text>
+            </VStack>
+          </MotionFlex>
 
-          {/* Desktop Navigation */}
-          <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
-            <NavButton>Features</NavButton>
-            <NavButton>How It Works</NavButton>
-            <NavButton>Pricing</NavButton>
+          {/* Desktop Navigation Mejorado */}
+          <HStack spacing={2} display={{ base: 'none', md: 'flex' }}>
+            <NavButton icon={<Sparkles size={16} />}>Features</NavButton>
+            <NavButton icon={<Zap size={16} />}>How It Works</NavButton>
+            <NavButton icon={<Shield size={16} />}>Pricing</NavButton>
             <NavButton>About</NavButton>
+
             <Link to='/Login'>
-              <Button
-                variant="primary"
+              <MotionButton
                 size="lg"
                 px={8}
                 py={6}
                 fontSize="md"
                 fontWeight="bold"
-                borderRadius="xl"
-                bgGradient="linear(to-r, brand.500, accent.500)"
-                _hover={{
-                  bgGradient: "linear(to-r, brand.600, accent.600)",
-                  transform: "translateY(-2px)",
-                  boxShadow: "xl"
+                borderRadius="2xl"
+                bg="linear-gradient(135deg, #9333ea, #7c3aed)"
+                color="white"
+                border="2px solid transparent"
+                backgroundClip="padding-box"
+                position="relative"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 40px rgba(147, 51, 234, 0.4)"
                 }}
-                transition="all 0.3s ease"
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                _hover={{
+                  bg: "linear-gradient(135deg, #7c3aed, #6366f1)",
+                  _before: {
+                    opacity: 1
+                  }
+                }}
+                _before={{
+                  content: '""',
+                  position: 'absolute',
+                  top: '-2px',
+                  left: '-2px',
+                  right: '-2px',
+                  bottom: '-2px',
+                  background: 'linear-gradient(45deg, #9333ea, #7c3aed, #6366f1, #9333ea)',
+                  borderRadius: '2xl',
+                  zIndex: -1,
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease'
+                }}
               >
-                Login
-              </Button>
+                <HStack spacing={2}>
+                  <Text>Login</Text>
+                  <Box
+                    as={motion.div}
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles size={16} />
+                  </Box>
+                </HStack>
+              </MotionButton>
             </Link>
+
+            <Badge
+              bg="rgba(147, 51, 234, 0.2)"
+              color="purple.200"
+              px={3}
+              py={1}
+              borderRadius="full"
+              fontSize="xs"
+              fontWeight="bold"
+              border="1px solid"
+              borderColor="purple.500/30"
+            >
+              NEW
+            </Badge>
           </HStack>
 
-          {/* Mobile Menu Button */}
-          <IconButton
+          {/* Mobile Menu Button Mejorado */}
+          <MotionBox
             display={{ base: 'flex', md: 'none' }}
-            aria-label="Toggle menu"
-            variant="ghost"
-            color="white"
-            icon={isOpen ? <X size={24} /> : <Menu size={24} />}
-            onClick={onToggle}
-            _hover={{ bg: 'whiteAlpha.200' }}
-          />
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <IconButton
+              aria-label="Toggle menu"
+              variant="ghost"
+              color="white"
+              icon={isOpen ? <X size={24} /> : <Menu size={24} />}
+              onClick={onToggle}
+              bg="rgba(147, 51, 234, 0.2)"
+              _hover={{
+                bg: 'rgba(147, 51, 234, 0.3)',
+                boxShadow: "0 4px 16px rgba(147, 51, 234, 0.3)"
+              }}
+              borderRadius="xl"
+              border="1px solid"
+              borderColor="rgba(147, 51, 234, 0.3)"
+            />
+          </MotionBox>
         </Flex>
 
-        {/* Mobile Menu */}
-        <Collapse in={isOpen} animateOpacity>
-          <VStack
-            display={{ base: 'flex', md: 'none' }}
-            pb={4}
-            spacing={4}
-            align="stretch"
-          >
-            <MobileNavButton>Features</MobileNavButton>
-            <MobileNavButton>How It Works</MobileNavButton>
-            <MobileNavButton>Pricing</MobileNavButton>
-            <MobileNavButton>About</MobileNavButton>
-            <Button
-              variant="primary"
-              size="lg"
-              bgGradient="linear(to-r, brand.500, accent.500)"
-              _hover={{
-                bgGradient: "linear(to-r, brand.600, accent.600)"
-              }}
-              fontWeight="bold"
+        {/* Mobile Menu Mejorado */}
+        <AnimatePresence>
+          {isOpen && (
+            <MotionBox
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              overflow="hidden"
             >
-              Try Now
-            </Button>
-          </VStack>
-        </Collapse>
+              <VStack
+                display={{ base: 'flex', md: 'none' }}
+                pb={6}
+                pt={4}
+                spacing={3}
+                align="stretch"
+                bg="linear-gradient(135deg, rgba(16, 16, 23, 0.95), rgba(44, 23, 82, 0.9))"
+                borderRadius="2xl"
+                mt={2}
+                border="1px solid"
+                borderColor="rgba(147, 51, 234, 0.2)"
+                backdropFilter="blur(20px)"
+              >
+                <MobileNavButton icon={<Sparkles size={18} />}>Features</MobileNavButton>
+                <MobileNavButton icon={<Zap size={18} />}>How It Works</MobileNavButton>
+                <MobileNavButton icon={<Shield size={18} />}>Pricing</MobileNavButton>
+                <MobileNavButton>About</MobileNavButton>
+
+                <MotionButton
+                  bg="linear-gradient(135deg, #9333ea, #7c3aed)"
+                  color="white"
+                  size="lg"
+                  borderRadius="xl"
+                  fontWeight="bold"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  _hover={{
+                    bg: "linear-gradient(135deg, #7c3aed, #6366f1)"
+                  }}
+                >
+                  Try Now
+                </MotionButton>
+              </VStack>
+            </MotionBox>
+          )}
+        </AnimatePresence>
       </Container>
-    </Box>
+    </MotionBox>
   );
 };
 
-const NavButton = ({ children }) => (
-  <Button
+const NavButton = ({ children, icon }) => (
+  <MotionButton
     variant="ghost"
-    color="gray.300"
+    color="rgba(255, 255, 255, 0.8)"
     position="relative"
+    px={4}
+    py={2}
+    borderRadius="xl"
+    fontWeight="600"
+    whileHover={{ scale: 1.05, y: -2 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ type: "spring", stiffness: 400, damping: 17 }}
     _hover={{
       color: 'white',
+      bg: 'rgba(147, 51, 234, 0.2)',
+      boxShadow: "0 4px 16px rgba(147, 51, 234, 0.2)",
       _after: {
         transform: 'scaleX(1)',
-        transformOrigin: 'left',
+        opacity: 1
       }
     }}
     _after={{
       content: '""',
       position: 'absolute',
-      bottom: '0',
-      left: '0',
-      width: '100%',
+      bottom: '-10px',
+      width: '80%',
       height: '2px',
-      bgGradient: 'linear(to-r, brand.400, accent.400)',
-      transform: 'scaleX(0)',
-      transformOrigin: 'right',
-      transition: 'transform 0.3s ease'
+      bgGradient: 'linear(to-r, #9333ea, #7c3aed)',
+      transform: 'translateX(-50%) scaleX(0)',
+      opacity: 0,
+      transition: 'all 0.3s ease',
+      borderRadius: 'full'
     }}
   >
-    {children}
-  </Button>
+    <HStack spacing={2}>
+      {icon && <Box color="purple.300">{icon}</Box>}
+      <Text>{children}</Text>
+    </HStack>
+  </MotionButton>
 );
 
-const MobileNavButton = ({ children }) => (
-  <Button
+const MobileNavButton = ({ children, icon }) => (
+  <MotionButton
     variant="ghost"
-    color="gray.300"
+    color="rgba(255, 255, 255, 0.8)"
     w="full"
     justifyContent="flex-start"
     fontSize="lg"
-    py={6}
+    py={4}
+    px={6}
+    borderRadius="xl"
+    whileHover={{ x: 8, scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
     _hover={{
-      bg: 'whiteAlpha.100',
-      color: 'white'
+      bg: 'rgba(147, 51, 234, 0.3)',
+      color: 'white',
+      boxShadow: "inset 4px 0 0 #9333ea"
     }}
   >
-    {children}
-  </Button>
+    <HStack spacing={3}>
+      {icon && <Box color="purple.300">{icon}</Box>}
+      <Text>{children}</Text>
+    </HStack>
+  </MotionButton>
 );
 
 export default Navbar;
