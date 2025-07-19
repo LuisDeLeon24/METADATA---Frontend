@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
         }
 
         axios
-            .get('http://127.0.0.1:3000/Metadata/v1/user/profile', {
+            .get('http://127.0.0.1:3000/metadata/v1/user/profile', {
                 headers: { 'x-token': token }
             })
             .then((res) => {

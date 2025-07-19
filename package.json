@@ -45,7 +45,8 @@
     "react-slick": "^0.30.3",
     "recharts": "^2.15.3",
     "styled-components": "^6.1.18",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

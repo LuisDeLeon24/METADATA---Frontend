@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:3000/Metadata/v1',
+    baseURL: 'http://127.0.0.1:3000/metadata/v1',
     timeout: 5000
 });
 
@@ -41,6 +41,7 @@ export const login = async (data) => {
 
 export const register = async (data) => {
     try {
+        console.log(data)
         const res = await apiClient.post('/auth/register', data);
 
         return {
@@ -49,6 +50,7 @@ export const register = async (data) => {
             data: res.data
         };
     } catch (e) {
+        console.log(e.response.data)
         const msg = e.response?.data?.msg || 'Uknow error'
         return {
             error: true,
