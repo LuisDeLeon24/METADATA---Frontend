@@ -74,3 +74,55 @@ export const getAnalyses = async () => {
     };
   }
 };
+
+export const getAllReports = async () => {
+    try{
+        const res = await apiClient.get('/report/');
+        return {
+            data: res.data.data,
+            status: res.status
+        };
+    }catch(e){
+        const msg = e.response?.data?.message || 'Error desconocido al obtener reportes';
+        return {
+        error: true,
+        msg,
+        e
+        }; 
+    }
+}
+
+export const getCases = async () => {
+    try{
+        const res = await apiClient.get('/cases');
+        return {
+            data: res.data.cases,
+            status: res.status
+        };
+    }catch(e){
+        const msg = e.response?.data?.message || 'Error desconocido al obtener reportes';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+}
+
+export const getLogs = async () => {
+    try {
+        const res = await apiClient.get('/logs/');
+        return {
+            data: res.data.logs,
+            total: res.data.total,
+            status: res.status
+        };
+    } catch (e) {
+        const msg = e.response?.data?.message || 'Error desconocido al obtener logs';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+}
