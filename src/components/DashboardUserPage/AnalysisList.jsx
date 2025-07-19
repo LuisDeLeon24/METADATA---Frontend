@@ -61,10 +61,6 @@ const AnalysisList = () => {
     console.log('Descargando PDF para:', analysis._id);
   };
 
-  const handleLogout = () => {
-    logout();
-  }
-
   if (isLoading) {
     return (
       <Box textAlign="center" mt="24">
@@ -91,19 +87,6 @@ const AnalysisList = () => {
           Aquí tienes tus análisis.
         </Text>
       </Box>
-      <Button
-        onClick={handleLogout}
-        bgGradient="linear(to-r, red.400, red.600)"
-        color="white"
-        _hover={{ bgGradient: "linear(to-r, red.500, red.700)", boxShadow: "lg" }}
-        _active={{ transform: "scale(0.98)" }}
-        size="lg"
-        px={6}
-        borderRadius="xl"
-        mt={4}
-      >
-        Cerrar sesión
-      </Button>
 
 
       <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={10}>

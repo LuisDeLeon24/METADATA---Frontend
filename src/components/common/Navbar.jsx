@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Container,
@@ -15,6 +15,8 @@ import {
 import { BrainCog, Menu, X, Sparkles, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { UserContext } from '../../context/UserContext';
+import { logout } from '../../shared/hooks';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -23,6 +25,10 @@ const MotionButton = motion(Button);
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
+  const { user, refreshUser } = useContext(UserContext)
+
+  console.log(user);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +38,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    refreshUser();
+  }
 
   return (
     <MotionBox
@@ -133,7 +144,59 @@ const Navbar = () => {
             <NavButton icon={<Shield size={16} />}>Pricing</NavButton>
             <NavButton>About</NavButton>
 
-            <Link to='/Login'>
+            {!user?.role ? (
+              <Link to='/Login'>
+                <MotionButton
+                  size="lg"
+                  px={8}
+                  py={6}
+                  fontSize="md"
+                  fontWeight="bold"
+                  borderRadius="2xl"
+                  bg="linear-gradient(135deg, #9333ea, #7c3aed)"
+                  color="white"
+                  border="2px solid transparent"
+                  backgroundClip="padding-box"
+                  position="relative"
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 40px rgba(147, 51, 234, 0.4)"
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  _hover={{
+                    bg: "linear-gradient(135deg, #7c3aed, #6366f1)",
+                    _before: {
+                      opacity: 1
+                    }
+                  }}
+                  _before={{
+                    content: '""',
+                    position: 'absolute',
+                    top: '-2px',
+                    left: '-2px',
+                    right: '-2px',
+                    bottom: '-2px',
+                    background: 'linear-gradient(45deg, #9333ea, #7c3aed, #6366f1, #9333ea)',
+                    borderRadius: '2xl',
+                    zIndex: -1,
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease'
+                  }}
+                >
+                  <HStack spacing={2}>
+                    <Text>Login</Text>
+                    <Box
+                      as={motion.div}
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Sparkles size={16} />
+                    </Box>
+                  </HStack>
+                </MotionButton>
+              </Link>
+            ) : (
               <MotionButton
                 size="lg"
                 px={8}
@@ -171,9 +234,10 @@ const Navbar = () => {
                   opacity: 0,
                   transition: 'opacity 0.3s ease'
                 }}
+                onClick={() => handleLogout()}
               >
                 <HStack spacing={2}>
-                  <Text>Login</Text>
+                  <Text>Logout</Text>
                   <Box
                     as={motion.div}
                     animate={{ rotate: [0, 360] }}
@@ -183,7 +247,7 @@ const Navbar = () => {
                   </Box>
                 </HStack>
               </MotionButton>
-            </Link>
+            )}
 
             <Badge
               bg="rgba(147, 51, 234, 0.2)"
