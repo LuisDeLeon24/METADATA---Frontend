@@ -84,7 +84,7 @@ const Navbar = () => {
                 }}
                 transition="all 0.3s ease"
               >
-                Iniciar Sesion
+                Login
               </Button>
             </Link>
           </HStack>
