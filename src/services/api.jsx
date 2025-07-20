@@ -76,3 +76,38 @@ export const getAnalyses = async () => {
     };
   }
 };
+
+export const uploadEvidence = async (evidenceData) => {
+  try {
+    const res = await apiClient.post('/evidences/', evidenceData);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al subir evidencia';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const getCases = async () => {
+  try {
+    const res = await apiClient.get('/cases/');
+    return {
+      data: res.data.cases,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error desconocido al obtener casos';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
