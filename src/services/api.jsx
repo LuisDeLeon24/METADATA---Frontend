@@ -60,6 +60,24 @@ export const register = async (data) => {
     }
 }
 
+export const getUsers = async () => {
+    try {
+        const res = await apiClient.get('/users');
+        return {
+            success: true,
+            users: res.data.users,
+            status: res.status
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error desconocido al obtener usuarios';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+}
+
 export const getAnalyses = async () => {
   try {
     const res = await apiClient.get('/analysis/');
@@ -76,3 +94,55 @@ export const getAnalyses = async () => {
     };
   }
 };
+
+export const getCases = async () => {
+    try {
+        const res = await apiClient.get('/cases');
+        return {
+            success: res.data.success,
+            cases: res.data.cases,
+            total: res.data.total,
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || "Error al obtener los casos",
+            e: error
+        }
+    }
+}
+
+export const createCase = async (data) => {
+    try {
+        const res = await apiClient.post('/cases', data);
+        return {
+            success: res.data.success,
+            case: res.data.case,
+            status: res.status
+        }
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || "Error al crear el caso",
+            e: error
+        }
+    }
+}
+
+export const updateCase = async (id, data) => {
+    try {
+        const res = await apiClient.put(`/cases/${id}`, data);
+        return {
+            success: res.data.success,
+            case: res.data.case,
+            status: res.status
+        }
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || "Error al actualizar el caso",
+            e: error
+        }
+    }
+}

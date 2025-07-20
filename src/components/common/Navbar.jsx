@@ -142,7 +142,9 @@ const Navbar = () => {
             <NavButton icon={<Sparkles size={16} />}>Features</NavButton>
             <NavButton icon={<Zap size={16} />}>How It Works</NavButton>
             <NavButton icon={<Shield size={16} />}>Pricing</NavButton>
-            <NavButton>About</NavButton>
+            <Link to={'/cases'}>
+              <NavButton>Casos</NavButton>
+            </Link>
 
             {!user?.role ? (
               <Link to='/Login'>
