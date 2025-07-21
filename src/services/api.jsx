@@ -76,3 +76,37 @@ export const getAnalyses = async () => {
     };
   }
 };
+
+export const getEvidence = async () => {
+  try {
+    const res = await apiClient.get('/evidences/');
+    return {
+      data: res.data.data,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const getReport = async () => {
+  try {
+    const res = await apiClient.get('/report/');
+    return {
+      data: res.data.data,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
