@@ -60,6 +60,24 @@ export const register = async (data) => {
     }
 }
 
+export const getUsers = async () => {
+    try {
+        const res = await apiClient.get('/users');
+        return {
+            success: true,
+            users: res.data.users,
+            status: res.status
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error desconocido al obtener usuarios';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+}
+
 export const getAnalyses = async () => {
   try {
     const res = await apiClient.get('/analysis/');
@@ -76,6 +94,7 @@ export const getAnalyses = async () => {
     };
   }
 };
+
 
 export const getEvidence = async () => {
   try {
