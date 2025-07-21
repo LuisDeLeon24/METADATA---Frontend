@@ -4,11 +4,11 @@ import {
   Textarea, useColorModeValue, Alert, AlertIcon, AlertDescription,
   Spinner, useToast, Container, Flex, IconButton
 } from '@chakra-ui/react';
-import { ArrowBackIcon, DownloadIcon, EditIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, EditIcon } from '@chakra-ui/icons';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useOpenRouterChat } from '../../shared/hooks/useOpenRouterChat';
 import { useCases } from '../../shared/hooks/useCases';
-import { getCaseById, createReport, getReportByCase } from '../../services/api';
+import { getCaseById } from '../../services/api';
 
 const Report = () => {
   const [searchParams] = useSearchParams();
@@ -16,15 +16,13 @@ const Report = () => {
   const toast = useToast();
   const caseId = searchParams.get('caseId');
 
-  const { analyses, evidences, isLoading: casesLoading, fetchAnalysesByCaseId, fetchEvidencesByCase } = useCases();
+  const { analyses, isLoading: casesLoading, fetchAnalysesByCaseId } = useCases();
   const { sendMessage, response, loading: aiLoading, error: aiError } = useOpenRouterChat();
 
   const [caseData, setCaseData] = useState(null);
-  const [existingReport, setExistingReport] = useState(null);
   const [generatedContent, setGeneratedContent] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  const [savingReport, setSavingReport] = useState(false);
 
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -39,7 +37,11 @@ const Report = () => {
     loadCaseData();
   }, [caseId]);
 
-  useEffect(() => { if (response) setGeneratedContent(response); }, [response]);
+  useEffect(() => {
+    if (response && typeof response === 'string') {
+      setGeneratedContent(response);
+    }
+  }, [response]);
 
   const loadCaseData = async () => {
     try {
@@ -48,12 +50,6 @@ const Report = () => {
       if (caseResult.error) throw new Error(caseResult.msg);
       setCaseData(caseResult.case);
       await fetchAnalysesByCaseId(caseId);
-      await fetchEvidencesByCase(caseId);
-      const reportResult = await getReportByCase(caseId);
-      if (!reportResult.error && reportResult.data) {
-        setExistingReport(reportResult.data);
-        setGeneratedContent(reportResult.data.content || '');
-      }
     } catch (error) {
       toast({ title: 'Error', description: error.message, status: 'error', duration: 5000 });
     } finally {
@@ -61,45 +57,53 @@ const Report = () => {
     }
   };
 
-  const prompt = `Actúa como un analista de vigilancia forense especializado en perfilado de individuos mediante análisis visual avanzado. Tu misión es crear un perfil completo y detallado basado en las siguientes etiquetas extraídas por nuestro sistema de reconocimiento.\nANÁLISIS REQUERIDO:\nREPORTE Y COMPILACION DE LAS EVIDENCIAS\nANÁLISIS DE EVIDENCIAS: ${analyses.map(a => a.reportResult).join(' ')}`;
-  console.log(prompt);
   const handleGenerateReport = async () => {
-    try {
-      await sendMessage(prompt);
-      toast({ title: 'Generando reporte', status: 'info', duration: 3000 });
-    } catch (error) {
-      toast({ title: 'Error al generar', description: error.message, status: 'error', duration: 5000 });
-    }
-  };
-
-  const handleSaveReport = async () => {
-    if (!generatedContent.trim()) {
-      toast({ title: 'Error', description: 'Contenido vacío', status: 'warning', duration: 3000 });
+  try {
+    if (!analyses || analyses.length === 0) {
+      toast({
+        title: 'Sin análisis',
+        description: 'No hay análisis disponibles para generar el reporte.',
+        status: 'warning',
+        duration: 3000,
+      });
       return;
     }
-    try {
-      setSavingReport(true);
-      const reportData = {
-        content: generatedContent,
-        caseID: caseId,
-        evidence: evidences.map(e => e._id),
-        confidential: true
-      };
-      const result = await createReport(reportData);
-      if (result.error) throw new Error(result.msg);
-      setExistingReport(result.report);
-      setIsEditMode(false);
-      toast({ title: 'Guardado', status: 'success', duration: 3000 });
-    } catch (error) {
-      toast({ title: 'Error al guardar', description: error.message, status: 'error', duration: 5000 });
-    } finally {
-      setSavingReport(false);
-    }
-  };
+
+   const prompt = `Actúa como un analista senior en una unidad de inteligencia digital especializada en vigilancia forense. Tu tarea es redactar un informe técnico confidencial que compile y analice en profundidad una serie de resultados generados por modelos de inteligencia artificial sobre evidencias digitales pertenecientes al mismo caso investigativo.
+
+Estructura el informe en tres secciones: **Introducción**, **Análisis y Hallazgos**, y **Conclusiones y Recomendaciones**.
+
+- En la **introducción**, contextualiza brevemente el objetivo del informe y la naturaleza de la evidencia analizada.
+- En la sección de **análisis y hallazgos**, describe patrones detectados, correlaciones entre evidencias, anomalías relevantes, y cualquier posible implicación en términos de comportamiento, intención o riesgo digital. Asume que todas las evidencias están conectadas y pertenecen al mismo caso.
+- En las **conclusiones y recomendaciones**, sintetiza los hallazgos, extrae inferencias, plantea hipótesis operativas sólidas, y propone acciones sugeridas desde un enfoque de inteligencia aplicada y ciberseguridad.
+
+El tono debe ser técnico, profesional y estratégico, como si fuera elaborado por una unidad de análisis de alto nivel (ej. Palantir o la NSA). No incluyas fechas, nombres de investigadores ni referencias personales. Asegúrate de que el informe sea lógico, persuasivo, claro y altamente informativo, como si se destinara a una junta de operaciones sensibles.
+
+A continuación se presentan los resultados de los modelos de IA, cada uno correspondiente a una evidencia del caso:
+
+${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
+
+
+
+    console.log('Prompt:', prompt); // ✅ debería mostrar los textos correctos
+    await sendMessage(prompt);
+    toast({ title: 'Generando reporte', status: 'info', duration: 3000 });
+  } catch (error) {
+    toast({ title: 'Error al generar', description: error.message, status: 'error', duration: 5000 });
+  }
+};
+
 
   if (loadingData || casesLoading) {
     return (
-      <Container maxW="7xl" py={8}><Flex justify="center" minH="50vh"><VStack><Spinner size="xl" /><Text>Cargando caso...</Text></VStack></Flex></Container>
+      <Container maxW="7xl" py={8}>
+        <Flex justify="center" minH="50vh">
+          <VStack>
+            <Spinner size="xl" />
+            <Text>Cargando caso...</Text>
+          </VStack>
+        </Flex>
+      </Container>
     );
   }
 
@@ -109,15 +113,15 @@ const Report = () => {
         <HStack mb={6} justify="space-between">
           <HStack>
             <IconButton icon={<ArrowBackIcon />} onClick={() => navigate('/cases')} variant="ghost" aria-label="Volver" />
-            <VStack align="start"><Heading size="lg">Reporte Forense</Heading><Text color="gray.500">{caseData.title}</Text></VStack>
+            <VStack align="start">
+              <Heading size="lg">Reporte Forense</Heading>
+              <Text color="gray.500">{caseData.title}</Text>
+            </VStack>
           </HStack>
           {generatedContent && (
-            <HStack>
-              <IconButton icon={<DownloadIcon />} aria-label="Descargar" variant="ghost" />
-              <Button leftIcon={<EditIcon />} onClick={() => setIsEditMode(!isEditMode)} variant="ghost" colorScheme="purple">
-                {isEditMode ? 'Ver' : 'Editar'}
-              </Button>
-            </HStack>
+            <Button leftIcon={<EditIcon />} onClick={() => setIsEditMode(!isEditMode)} variant="ghost" colorScheme="purple">
+              {isEditMode ? 'Ver' : 'Editar'}
+            </Button>
           )}
         </HStack>
 
@@ -129,17 +133,22 @@ const Report = () => {
                 <Button colorScheme="purple" onClick={handleGenerateReport} isLoading={aiLoading} size="sm">
                   {generatedContent ? 'Regenerar' : 'Generar'}
                 </Button>
-                {generatedContent && (
-                  <Button colorScheme="green" onClick={handleSaveReport} isLoading={savingReport} size="sm">
-                    {existingReport ? 'Actualizar' : 'Guardar'}
-                  </Button>
-                )}
               </HStack>
 
-              {aiError && <Alert status="error"><AlertIcon /><AlertDescription>{aiError}</AlertDescription></Alert>}
+              {aiError && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{aiError}</AlertDescription>
+                </Alert>
+              )}
 
               {aiLoading ? (
-                <Flex justify="center" py={12}><VStack><Spinner size="lg" /><Text>Procesando...</Text></VStack></Flex>
+                <Flex justify="center" py={12}>
+                  <VStack>
+                    <Spinner size="lg" />
+                    <Text>Procesando...</Text>
+                  </VStack>
+                </Flex>
               ) : generatedContent ? (
                 isEditMode ? (
                   <Textarea value={generatedContent} onChange={e => setGeneratedContent(e.target.value)} minH="600px" fontSize="sm" />
@@ -160,3 +169,4 @@ const Report = () => {
 };
 
 export default Report;
+

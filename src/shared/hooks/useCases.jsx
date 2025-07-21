@@ -72,6 +72,7 @@ export const useCases = () => {
     setIsLoading(true);
     try {
       const response = await getAnalysisByCaseIdRequest(id);
+      console.log("Response from getAnalysisByCaseIdRequest:", response);
       if (response.success) {
         setAnalyses(response.analyses);
       } else {
