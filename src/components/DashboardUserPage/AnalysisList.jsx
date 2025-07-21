@@ -89,9 +89,15 @@ const AnalysisList = () => {
         <Button
           colorScheme="blue"
           onClick={() => navigate('/analyze')}        >
-          Analizar
+          Analizar IMG
+        </Button>
+        <Button
+          colorScheme="blue"
+          onClick={() => navigate('/analyzePdf')}        >
+          Analizar PDF
         </Button>
       </Box>
+
 
       <Box mb={8} textAlign="center">
         <Heading size="lg">Bienvenido, {username}</Heading>

@@ -7,6 +7,7 @@ const UnauthorizedModal = lazy(() => import('../components/common/UnauthorizedMo
 const DashboardUserPage = lazy(() => import('../pages/DashboardUserPage'))
 const PrivateRoute = lazy(() => import('../components/common/PrivateRoute.jsx'));
 const AnalysisImgPage = lazy(() => import('../pages/AnalysisImgPage'))
+const AnalysisPdfPage = lazy(() => import('../pages/AnalysisPdfPage'))
 
 
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
   { path: '/Login', element: <Login /> },
   { path: '/unauthorized', element: <UnauthorizedModal /> },
   { path: '/user/dashboard', element: <DashboardUserPage />},
-  { path: '/analyze', element: <AnalysisImgPage />}
+  { path: '/analyze', element: <AnalysisImgPage />},
+  { path: '/analyzePdf', element: <AnalysisPdfPage />}
   
 ];
 
