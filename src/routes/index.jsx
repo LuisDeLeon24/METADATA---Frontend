@@ -7,6 +7,7 @@ const UnauthorizedModal = lazy(() => import('../components/common/UnauthorizedMo
 const DashboardUserPage = lazy(() => import('../pages/DashboardUserPage'))
 const CasesPage = lazy(() => import('../pages/Cases.jsx'))
 const PrivateRoute = lazy(() => import('../components/common/PrivateRoute.jsx'));
+const Report = lazy(() => import('../components/report/Report.jsx'))
 
 
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
   { path: '/Login', element: <Login /> },
   { path: '/unauthorized', element: <UnauthorizedModal /> },
   { path: '/user/dashboard', element: <DashboardUserPage /> },
-  { path: '/cases', element: <CasesPage /> }
+  { path: '/cases', element: <CasesPage /> },
+  {path: '/report', element: <Report/>}
 ];
 
 export default routes;

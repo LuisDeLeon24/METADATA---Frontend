@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 
 export function useOpenRouterChat() {
   const [loading, setLoading] = useState(false);
@@ -11,17 +11,17 @@ export function useOpenRouterChat() {
     setLoading(true);
     setError(null);
 
-    try {
+    try { 
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://tusitio.com', // opcional
-          'X-Title': 'Mi Aplicación React', // opcional
+          'HTTP-Referer': 'http://localhost:3000', // opcional
+          'X-Title': 'METADATA', // opcional
         },
         body: JSON.stringify({
-          model: 'microsoft/mai-ds-r1:free',
+              model: 'openai/gpt-3.5-turbo',
           messages: [
             { role: 'user', content: message }
           ]
