@@ -74,3 +74,58 @@ export const getAnalyses = async () => {
     };
   }
 };
+
+export const getLogs = async (params = {}) => {
+  try {
+    const res = await apiClient.get('/logs', { params });
+    return {
+      data: res.data.logs,
+      total: res.data.total,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al obtener logs';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const createLog = async (logData) => {
+  try {
+    const res = await apiClient.post('/logs', logData);
+    return {
+      success: true,
+      log: res.data.log,
+      msg: res.data.msg,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al crear log';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const getUsers = async () => {
+  try {
+    const res = await apiClient.get('/users');
+    return {
+      data: res.data.users,
+      total: res.data.total,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al obtener usuarios';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};

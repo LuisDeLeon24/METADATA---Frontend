@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Container, Flex, Button, Text, HStack, IconButton, useDisclosure, VStack, Collapse } from '@chakra-ui/react';
-import { BrainCog, Menu, X, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import {
+  Box, Container, Flex, Button, Text, HStack,
+  IconButton, useDisclosure, VStack, Collapse
+} from '@chakra-ui/react';
+import { BrainCog, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/UserContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,6 +21,10 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleGoToLogs = () => {
+    navigate('/logs');
+  };
 
   return (
     <Box
@@ -65,7 +76,7 @@ const Navbar = () => {
             <NavButton>Features</NavButton>
             <NavButton>How It Works</NavButton>
             <NavButton>Pricing</NavButton>
-            <NavButton>About</NavButton>
+            <NavButton onClick={handleGoToLogs}>About</NavButton>
             <Button
               variant="primary"
               size="lg"
@@ -109,7 +120,7 @@ const Navbar = () => {
             <MobileNavButton>Features</MobileNavButton>
             <MobileNavButton>How It Works</MobileNavButton>
             <MobileNavButton>Pricing</MobileNavButton>
-            <MobileNavButton>About</MobileNavButton>
+            <MobileNavButton onClick={handleGoToLogs}>About</MobileNavButton>
             <Button
               variant="primary"
               size="lg"
@@ -128,8 +139,9 @@ const Navbar = () => {
   );
 };
 
-const NavButton = ({ children }) => (
+const NavButton = ({ children, onClick }) => (
   <Button
+    onClick={onClick}
     variant="ghost"
     color="gray.300"
     position="relative"
@@ -157,8 +169,9 @@ const NavButton = ({ children }) => (
   </Button>
 );
 
-const MobileNavButton = ({ children }) => (
+const MobileNavButton = ({ children, onClick }) => (
   <Button
+    onClick={onClick}
     variant="ghost"
     color="gray.300"
     w="full"

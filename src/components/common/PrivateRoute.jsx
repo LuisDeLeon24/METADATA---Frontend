@@ -5,16 +5,18 @@ import { UserContext } from "../../context/UserContext";
 const PrivateRoute = ({ allowedRoles }) => {
     const { user } = useContext(UserContext);
 
-    if(!user){
-        return <Navigate to="/" replace />;
+    // Si no hay sesión activa, redirigir al login
+    if (!user) {
+        return <Navigate to="/login" replace />;
     }
 
-    if (!allowedRoles.includes(user.role)) {
+    // Si hay usuario pero no tiene permisos
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
         return <Navigate to="/unauthorized" replace />;
-      }
-      
+    }
+
+    // Usuario permitido
     return <Outlet />;
+};
 
-}
-
-export default PrivateRoute
+export default PrivateRoute;
