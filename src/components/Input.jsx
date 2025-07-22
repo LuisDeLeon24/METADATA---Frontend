@@ -47,7 +47,7 @@ export const CustomInput = ({
     };
 
     return (
-        <FormControl isInvalid={showErrorMessage} maxW="400px">
+        <FormControl isInvalid={showErrorMessage} maxW="400px" color='whiteAlpha.700' >
             <FormLabel>{label}</FormLabel>
             {textArea ? (
                 <Textarea
