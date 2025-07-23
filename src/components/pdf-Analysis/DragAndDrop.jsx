@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { usePdfEvidenceUpload } from '../../shared/hooks/pdf-analysis/usePdfEvidenceUpload';
-
-// Keyframes para animaciones
+import { useOpenRouterChat } from '../../shared/hooks/image-analysis';
+import { useCases } from '../../shared/hooks/cases';
+import { useUploadAnalysis } from '../../shared/hooks/analysis/useUploadAnalysis';
 const float = `
   @keyframes float {
     0% { transform: translateY(0px) rotate(0deg); }
@@ -34,13 +35,15 @@ const shimmer = `
   }
 `;
 
-// Inyectar estilos CSS
 const styleSheet = document.createElement("style");
 styleSheet.type = "text/css";
 styleSheet.innerText = float + pulse + glow + shimmer;
 document.head.appendChild(styleSheet);
 
-const PdfEvidenceUploader = ({ caseId, userId }) => {
+const PdfEvidenceUploader = ({ userId }) => {
+  const [selectedCaseId, setSelectedCaseId] = React.useState('');
+  const [evidenceId, setEvidenceId] = React.useState(null);
+
   const {
     file,
     text,
@@ -58,30 +61,38 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
     extractingText,
     uploadingToCloud,
     savingEvidence,
-    cases,
-    loadingCases,
-    selectedCaseId,
-    setSelectedCaseId
-  } = usePdfEvidenceUpload(caseId, userId);
+    evidenceUrl,
+    evidenceIdRef,
 
-  // Efectos para el flujo automático
+  } = usePdfEvidenceUpload(selectedCaseId, userId, setEvidenceId);
+  const { cases, loading: loadingCases, error: errorCases } = useCases();
+
+  const {
+    saveAnalysis,
+    isSaving: savingAnalysis,
+    saveError: analysisError
+  } = useUploadAnalysis();
+
+
   useEffect(() => {
     uploadToCloudinaryEffect();
   }, [text, extractingText]);
 
+
   useEffect(() => {
     saveEvidenceEffect();
-  }, [pdfUrl, uploadingToCloud]);
+  }, [evidenceUrl, uploadingToCloud]);
 
-  // Manejar selección de archivo
+
   const handleFileSelect = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       processPdfFile(selectedFile);
     }
   };
+  const { sendMessage, response: aiAnalysis, loading: aiLoading, error: aiError } = useOpenRouterChat();
 
-  // Manejar drag and drop
+
   const handleDrop = (event) => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
@@ -105,6 +116,43 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
     e.preventDefault();
     setIsDragOver(false);
   };
+
+
+
+  useEffect(() => {
+    if (text && !extractingText && !aiLoading && !aiAnalysis && success) {
+      const prompt = `Describe el siguiente texto: \n\n${text}`;
+      sendMessage(prompt);
+    }
+  }, [text, extractingText, success, aiLoading, aiAnalysis]);
+
+  const hasSavedAnalysis = React.useRef(false);
+
+  useEffect(() => {
+    const finalId = evidenceIdRef.current;
+
+    if (aiAnalysis && finalId && !hasSavedAnalysis.current) {
+      hasSavedAnalysis.current = true;
+
+      saveAnalysis({
+        evidenciaID: finalId,
+        resultado: aiAnalysis,
+        modelosIa: 'OpenRouter GPT-3.5',
+        metadatos: JSON.stringify({
+          length: aiAnalysis.length,
+          generatedAt: new Date().toISOString()
+        })
+      }).then(() => {
+        console.log('[DEBUG] saveAnalysis terminó correctamente');
+      }).catch((err) => {
+        console.error('[DEBUG] saveAnalysis fallo:', err);
+        hasSavedAnalysis.current = false;
+      });
+    }
+  }, [aiAnalysis]); 
+
+
+
 
   return (
     <div
@@ -147,7 +195,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '48px 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          
+
           {/* Header */}
           <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div
@@ -166,7 +214,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
             >
               🛡️
             </div>
-            
+
             <h1
               style={{
                 fontSize: '4rem',
@@ -183,7 +231,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
             >
               DocuForense
             </h1>
-            
+
             <p
               style={{
                 fontSize: '1.25rem',
@@ -350,7 +398,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                   >
                     📄
                   </div>
-                  
+
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <h3
                       style={{
@@ -363,12 +411,12 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                     >
                       {isDragOver ? '¡Perfecto! Suelta aquí' : 'Zona de Análisis Forense PDF'}
                     </h3>
-                    
+
                     <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1.125rem', maxWidth: '448px', lineHeight: '1.6', margin: 0 }}>
                       Arrastra tu documento PDF aquí para iniciar el análisis
                       con inteligencia artificial avanzada
                     </p>
-                    
+
                     <input
                       type="file"
                       accept=".pdf"
@@ -377,7 +425,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                       id="pdf-upload"
                       disabled={isLoading}
                     />
-                    
+
                     <label
                       htmlFor="pdf-upload"
                       style={{
@@ -395,7 +443,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                     >
                       {isLoading ? 'Procesando...' : 'Seleccionar PDF'}
                     </label>
-                    
+
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
                       <span style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#c084fc', padding: '4px 12px', borderRadius: '8px', fontSize: '0.875rem' }}>
                         PDF
@@ -465,7 +513,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                       }}
                     />
                   </div>
-                  
+
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
                     {steps.map((step, index) => (
                       <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -476,15 +524,15 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                             background: step.status === 'complete'
                               ? 'linear-gradient(135deg, #10B981, #059669)'
                               : step.status === 'active'
-                              ? 'linear-gradient(135deg, #8B5CF6, #A855F7)'
-                              : 'rgba(255, 255, 255, 0.1)',
+                                ? 'linear-gradient(135deg, #8B5CF6, #A855F7)'
+                                : 'rgba(255, 255, 255, 0.1)',
                             color: 'white',
                             border: '2px solid',
                             borderColor: step.status === 'complete'
                               ? '#10b981'
                               : step.status === 'active'
-                              ? '#a855f7'
-                              : 'rgba(255, 255, 255, 0.3)',
+                                ? '#a855f7'
+                                : 'rgba(255, 255, 255, 0.3)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -493,16 +541,16 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                             animation: step.status === 'active' ? 'pulse 1.5s infinite' : 'none'
                           }}
                         >
-                          {step.status === 'complete' ? '✅' : 
-                           step.status === 'active' ? '⏳' : step.icon}
+                          {step.status === 'complete' ? '✅' :
+                            step.status === 'active' ? '⏳' : step.icon}
                         </div>
                         <p
                           style={{
                             color: step.status === 'complete'
                               ? '#6ee7b7'
                               : step.status === 'active'
-                              ? '#c084fc'
-                              : 'rgba(255, 255, 255, 0.6)',
+                                ? '#c084fc'
+                                : 'rgba(255, 255, 255, 0.6)',
                             fontWeight: '600',
                             fontSize: '0.875rem',
                             margin: 0
@@ -575,7 +623,7 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                     </p>
                   </div>
                 </div>
-                
+
                 {file && (
                   <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', padding: '16px' }}>
                     <h4 style={{ color: 'white', fontWeight: '500', margin: '0 0 8px 0' }}>📄 Documento Procesado:</h4>
@@ -585,20 +633,20 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
                     </p>
                   </div>
                 )}
-                
-                {text && (
-                  <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', padding: '16px' }}>
-                    <h4 style={{ color: 'white', fontWeight: '500', margin: '0 0 8px 0' }}>📖 Texto Extraído:</h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.875rem', maxHeight: '128px', overflowY: 'auto', margin: '0 0 8px 0' }}>
-                      {text.substring(0, 300)}
-                      {text.length > 300 && '...'}
-                    </p>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.75rem', margin: 0 }}>
-                      Total de caracteres: {text.length}
+
+                {aiLoading && (
+                  <div style={{ marginTop: '16px', color: '#c084fc' }}>🔍 Analizando con IA...</div>
+                )}
+
+                {aiAnalysis && (
+                  <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', padding: '16px', marginTop: '16px' }}>
+                    <h4 style={{ color: 'white', fontWeight: '500', margin: '0 0 8px 0' }}>🤖 Resultado del Análisis IA:</h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.875rem', whiteSpace: 'pre-line' }}>
+                      {aiAnalysis}
                     </p>
                   </div>
                 )}
-                
+
                 <button
                   onClick={resetStates}
                   style={{
@@ -622,17 +670,4 @@ const PdfEvidenceUploader = ({ caseId, userId }) => {
   );
 };
 
-// Componente principal App
-function App() {
-  // Ejemplo de uso con props
-  const caseId = "683e97049055a045f01cddc7"; // ID del caso actual
-  const userId = "user-456"; // ID del usuario actual
-
-  return (
-    <div className="App">
-      <PdfEvidenceUploader caseId={caseId} userId={userId} />
-    </div>
-  );
-}
-
-export default App;
+export default PdfEvidenceUploader

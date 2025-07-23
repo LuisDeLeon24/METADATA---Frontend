@@ -80,11 +80,7 @@ export const getAnalyses = async () => {
 export const uploadEvidence = async (evidenceData) => {
   try {
     const res = await apiClient.post('/evidences/', evidenceData);
-    return {
-      success: true,
-      status: res.status,
-      data: res.data
-    };
+    return res.data; 
   } catch (e) {
     const msg = e.response?.data?.msg || 'Error al subir evidencia';
     return {
@@ -95,6 +91,7 @@ export const uploadEvidence = async (evidenceData) => {
   }
 };
 
+
 export const getCases = async () => {
   try {
     const res = await apiClient.get('/cases/');
@@ -104,6 +101,24 @@ export const getCases = async () => {
     };
   } catch (e) {
     const msg = e.response?.data?.msg || 'Error desconocido al obtener casos';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const uploadAnalysis = async (analysisData) => {
+  try {
+    const res = await apiClient.post('/analysis/', analysisData);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error al guardar análisis';
     return {
       error: true,
       msg,

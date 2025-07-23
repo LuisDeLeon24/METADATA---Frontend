@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 
 export function useOpenRouterChat() {
   const [loading, setLoading] = useState(false);
@@ -17,8 +17,8 @@ export function useOpenRouterChat() {
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'http://localhost:5173', // opcional
-          'X-Title': 'METADATA', // opcional
+          'HTTP-Referer': 'http://localhost:5173',
+          'X-Title': 'METADATA', 
         },
         body: JSON.stringify({
               model: 'openai/gpt-3.5-turbo',
