@@ -309,3 +309,83 @@ export const getLogs = async () => {
         };
     }
 }
+
+
+export const createLog = async (logData) => {
+  try {
+    const res = await apiClient.post('/logs', logData);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data.log,
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error desconocido al crear log';
+    return {
+      error: true,
+      msg,
+      e,
+    };
+  }
+};
+
+export const getCasesByResearcher = async () => {
+  try {
+    const res = await apiClient.get('/cases/my-cases');
+    return {
+      success: true,
+      status: res.status,
+      data: res.data.data 
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al obtener casos';
+    return {
+      error: true,
+      msg,
+      e,
+    };
+  }
+};
+
+export const getEvidenceByUser = async (userId) => {
+  try {
+    const res = await apiClient.get('/evidences/user');
+    return {
+      success: true,
+      status: res.status,
+      data: res.data.evidences  // acá entregamos el array en data
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error al obtener evidencias';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const getAnalysesByResearcher = async (userId) => {
+  try {
+    const res = await apiClient.get('/analysis/');
+    const allAnalyses = res.data.data || [];
+
+    const filtered = allAnalyses.filter(
+      (a) => a.evidenciaID?.case?.researcher === userId
+    );
+
+    return {
+      success: true,
+      status: res.status,
+      data: filtered
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+

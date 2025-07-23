@@ -14,6 +14,7 @@ import {
   useToast,
   Icon,
   Button,
+  Flex,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaRobot } from 'react-icons/fa';
@@ -60,17 +61,24 @@ const AnalysisList = () => {
   };
 
   const handleDownloadPdf = (analysis) => {
-
     console.log('Descargando PDF para:', analysis._id);
   };
 
   if (isLoading) {
     return (
-      <Box textAlign="center" mt="24">
-        <Spinner size="xl" />
-        <Text mt={4} fontSize="lg">
+      <Flex justify="center" align="center" minH="300px" bg="gray.900">
+        <Spinner size="xl" color="purple.400" />
+        <Text ml={4} color="gray.300" fontSize="lg">
           Cargando análisis...
         </Text>
+      </Flex>
+    );
+  }
+
+  if (analyses.length === 0) {
+    return (
+      <Box bg="gray.900" p={6} textAlign="center" borderRadius="md">
+        <Text color="gray.400">No hay análisis disponibles</Text>
       </Box>
     );
   }
@@ -113,12 +121,13 @@ const AnalysisList = () => {
           return (
             <MotionCard
               key={analysis._id}
-              borderWidth="3px"
+              borderWidth="1px"
               borderRadius="2xl"
-              borderColor="gray.300"
+              borderColor="purple.700"
+              bg={isSelected ? 'purple.700' : 'purple.800'}
+              color="white"
               boxShadow="md"
               p={4}
-              bg={isSelected ? 'gray.100' : 'white'}
               cursor="pointer"
               onClick={() => handleCardClick(analysis._id)}
               whileHover={{ scale: 1.02 }}
@@ -127,27 +136,27 @@ const AnalysisList = () => {
               transition={{ duration: 0.3, delay: i * 0.1 }}
             >
               <CardHeader>
-                <Box display="flex" alignItems="center" gap={3}>
-                  <Icon as={FaRobot} boxSize={5} color="blue.500" />
-                  <Heading color="gray.600" size="md">Análisis de Evidencia</Heading>
-                </Box>
+                <Flex align="center" gap={3}>
+                  <Icon as={FaRobot} boxSize={5} color="purple.300" />
+                  <Heading size="md">Análisis de Evidencia</Heading>
+                </Flex>
               </CardHeader>
 
               <CardBody>
-                <Stack divider={<StackDivider />} spacing="4">
+                <Stack divider={<StackDivider borderColor="purple.600" />} spacing="4">
                   <Box>
-                    <Text fontWeight="semibold" color="gray.600">Resultado:</Text>
-                    <Text color="gray.600">{analysis.resultado}</Text>
+                    <Text fontWeight="semibold" color="purple.200">Resultado:</Text>
+                    <Text>{analysis.resultado}</Text>
                   </Box>
 
                   <Box>
-                    <Text fontWeight="semibold" color="gray.600">Modelos de IA usados:</Text>
-                    <Text color="gray.600">{analysis.modelosIa}</Text>
+                    <Text fontWeight="semibold" color="purple.200">Modelos de IA usados:</Text>
+                    <Text>{analysis.modelosIa}</Text>
                   </Box>
 
                   <Box>
-                    <Text fontWeight="semibold" color="gray.600">Metadatos:</Text>
-                    <Text whiteSpace="pre-wrap" fontSize="sm" color="gray.700">
+                    <Text fontWeight="semibold" color="purple.200">Metadatos:</Text>
+                    <Text whiteSpace="pre-wrap" fontSize="sm" color="purple.100">
                       {analysis.metadatos}
                     </Text>
                   </Box>
@@ -155,10 +164,10 @@ const AnalysisList = () => {
                   {isSelected && (
                     <Box pt={4}>
                       <Button
-                        bg="#3C6888"
+                        bg="purple.500"
                         color="white"
-                        _hover={{ bg: "#3C6870" }}
-                        size="lg"
+                        _hover={{ bg: 'purple.600' }}
+                        size="md"
                         width="100%"
                         onClick={(e) => {
                           e.stopPropagation();
