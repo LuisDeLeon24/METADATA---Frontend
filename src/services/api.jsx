@@ -79,20 +79,38 @@ export const getUsers = async () => {
 }
 
 export const getAnalyses = async () => {
-  try {
-    const res = await apiClient.get('/analysis/');
-    return {
-      data: res.data.data,
-      status: res.status
-    };
-  } catch (e) {
-    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
-    return {
-      error: true,
-      msg,
-      e
-    };
-  }
+    try {
+        const res = await apiClient.get('/analysis/');
+        return {
+            data: res.data.data,
+            status: res.status
+        };
+    } catch (e) {
+        const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+};
+
+export const uploadEvidence = async (evidenceData) => {
+    try {
+        const res = await apiClient.post('/evidences/', evidenceData);
+        return {
+            success: true,
+            status: res.status,
+            data: res.data
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al subir evidencia';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
 };
 
 export const getCases = async () => {

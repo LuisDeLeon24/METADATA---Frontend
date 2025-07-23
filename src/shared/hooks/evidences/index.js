@@ -1,0 +1,1 @@
+export { useUploadEvidence } from "./useUploadEvidences";

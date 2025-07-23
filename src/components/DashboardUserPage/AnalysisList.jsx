@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Text,
@@ -27,6 +28,8 @@ const AnalysisList = () => {
   const [username, setUsername] = useState('');
   const [selectedCardId, setSelectedCardId] = useState(null);
   const toast = useToast();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -77,10 +80,25 @@ const AnalysisList = () => {
       p={6}
       mt="100"
       mb="100"
+      position="relative"
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
+      <Box position="absolute" top="0" right="0">
+        <Button
+          colorScheme="blue"
+          onClick={() => navigate('/analyze')}        >
+          Analizar IMG
+        </Button>
+        <Button
+          colorScheme="blue"
+          onClick={() => navigate('/analyzePdf')}        >
+          Analizar PDF
+        </Button>
+      </Box>
+
+
       <Box mb={8} textAlign="center">
         <Heading size="lg">Bienvenido, {username}</Heading>
         <Text fontSize="md" color="gray.500">
