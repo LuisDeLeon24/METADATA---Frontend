@@ -95,23 +95,58 @@ export const getAnalyses = async () => {
     }
 };
 
-export const uploadEvidence = async (evidenceData) => {
+
+export const getEvidence = async () => {
+  try {
+    const res = await apiClient.get('/evidences/');
+    return {
+      data: res.data.data,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+export const getReport = async () => {
+  try {
+    const res = await apiClient.get('/report/');
+    return {
+      data: res.data.data,
+      status: res.status
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error desconocido al obtener análisis';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
+
+export const createCase = async (data) => {
     try {
-        const res = await apiClient.post('/evidences/', evidenceData);
+        const res = await apiClient.post('/cases', data);
         return {
-            success: true,
-            status: res.status,
-            data: res.data
-        };
-    } catch (e) {
-        const msg = e.response?.data?.msg || 'Error al subir evidencia';
+            success: res.data.success,
+            case: res.data.case,
+            status: res.status
+        }
+    } catch (error) {
         return {
             error: true,
-            msg,
-            e
-        };
+            msg: error.response?.data?.msg || "Error al crear el caso",
+            e: error
+        }
     }
-};
+}
 
 export const getCases = async () => {
     try {
@@ -131,23 +166,6 @@ export const getCases = async () => {
     }
 }
 
-export const createCase = async (data) => {
-    try {
-        const res = await apiClient.post('/cases', data);
-        return {
-            success: res.data.success,
-            case: res.data.case,
-            status: res.status
-        }
-    } catch (error) {
-        return {
-            error: true,
-            msg: error.response?.data?.msg || "Error al crear el caso",
-            e: error
-        }
-    }
-}
-
 export const updateCase = async (id, data) => {
     try {
         const res = await apiClient.put(`/cases/${id}`, data);
@@ -160,6 +178,97 @@ export const updateCase = async (id, data) => {
         return {
             error: true,
             msg: error.response?.data?.msg || "Error al actualizar el caso",
+            e: error
+        }
+    }
+}
+
+export const getCaseById = async (caseId) => {
+    try {
+        const res = await apiClient.get(`/cases/${caseId}`);
+        return {
+            success: res.data.success,
+            case: res.data.case,
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || "Error al obtener el caso",
+            e: error
+        }
+    }
+}
+
+// Función para obtener análisis por caso (usando tu endpoint existente)
+export const getAnalysisByCaseId = async (id) => {
+    try {
+        // Usa la ruta correcta del controlador
+        const res = await apiClient.get(`/cases/analisis/${id}`);
+        return {
+            success: res.data.success,
+            analyses: res.data.analyses,
+            total: res.data.total,
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || "Error al obtener los análisis del caso",
+            e: error
+        }
+    }
+}
+
+// Función para obtener evidencias por caso (corrigiendo la ruta)
+export const getEvidencesByCase = async (id) => {
+    try {
+        const res = await apiClient.get(`/evidences/${id}`);
+        return {
+            success: res.data.success,
+            evidences: res.data.evidences,
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.message || "Error al obtener las evidencias del caso",
+            e: error
+        }
+    }
+}
+
+// Función para crear un reporte
+export const createReport = async (data) => {
+    try {
+        const res = await apiClient.post('/report', data);
+        return {
+            success: res.data.success,
+            report: res.data.report,
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.message || "Error al crear el reporte",
+            e: error
+        }
+    }
+}
+
+// Función para obtener un reporte por caso
+export const getReportByCase = async (caseId) => {
+    try {
+        const res = await apiClient.get(`/report/case/${caseId}`);
+        return {
+            success: res.data.success,
+            data: res.data.data, // Según tu backend usa res.data.data
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.message || "Error al obtener el reporte del caso",
             e: error
         }
     }

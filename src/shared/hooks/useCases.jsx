@@ -3,11 +3,15 @@ import toast from "react-hot-toast";
 import {
   getCases as getCasesRequest,
   createCase as createCaseRequest,
-  updateCase as updateCaseRequest
+  updateCase as updateCaseRequest,
+  getAnalysisByCaseId as getAnalysisByCaseIdRequest,
+  getEvidencesByCase as getEvidencesByCaseRequest
 } from "../../services";
 
 export const useCases = () => {
   const [cases, setCases] = useState([]);
+  const [analyses, setAnalyses] = useState([]);
+  const [evidences, setEvidences] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -28,7 +32,7 @@ export const useCases = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const createCase = async (data) => {
     setIsLoading(true);
@@ -45,7 +49,7 @@ export const useCases = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const updateCase = async (id, data) => {
     setIsLoading(true);
@@ -62,14 +66,51 @@ export const useCases = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
+  const fetchAnalysesByCaseId = async (id) => {
+    setIsLoading(true);
+    try {
+      const response = await getAnalysisByCaseIdRequest(id);
+      console.log("Response from getAnalysisByCaseIdRequest:", response);
+      if (response.success) {
+        setAnalyses(response.analyses);
+      } else {
+        toast.error(response.msg || "Error al obtener los análisis del caso");
+      }
+    } catch (err) {
+      toast.error(err.message || "Error al obtener los análisis del caso");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchEvidencesByCase = async (id) => {
+    setIsLoading(true);
+    try {
+      const response = await getEvidencesByCaseRequest(id);
+      if (response.success) {
+        setEvidences(response.evidences);
+      } else {
+        toast.error(response.msg || "Error al obtener las evidencias del caso");
+      }
+    } catch (err) {
+      toast.error(err.message || "Error al obtener las evidencias del caso");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     cases,
+    analyses,
+    evidences,
     isLoading,
     error,
     fetchCases,
     createCase,
-    updateCase
+    updateCase,
+    fetchAnalysesByCaseId,
+    fetchEvidencesByCase
   };
 };

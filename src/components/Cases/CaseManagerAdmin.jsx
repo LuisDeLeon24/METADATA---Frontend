@@ -10,6 +10,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  ModalFooter,
   Text,
   Badge,
   VStack,
@@ -24,6 +25,7 @@ import {
   IconButton
 } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 import CasesList from "./CasesList";
 import CaseFormModal from "./CaseFormModal";
@@ -133,6 +135,7 @@ const CaseManagerAdmin = () => {
   const { cases, createCase, updateCase, fetchCases } = useCases();
   const { users } = useUsers();
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCases();
@@ -162,6 +165,12 @@ const CaseManagerAdmin = () => {
     }
     await fetchCases();
     onClose();
+  };
+
+  // Función simple para navegar al reporte
+  const handleViewReport = (id) => {
+    navigate(`/report?caseId=${id}`);
+    handleCloseView();
   };
 
   const userCases = cases.filter(
@@ -206,6 +215,18 @@ const CaseManagerAdmin = () => {
               </VStack>
             )}
           </ModalBody>
+          <ModalFooter>
+            <Button 
+              colorScheme="green" 
+              mr={3}
+              onClick={() => handleViewReport(viewingCase._id)}
+            >
+              Ver Reporte
+            </Button>
+            <Button variant="ghost" onClick={handleCloseView}>
+              Cerrar
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
 
