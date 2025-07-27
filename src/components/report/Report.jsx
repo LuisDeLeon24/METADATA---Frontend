@@ -47,6 +47,8 @@ const Report = () => {
     try {
       setLoadingData(true);
       const caseResult = await getCaseById(caseId);
+      console.log(caseResult.e.response.data);
+      
       if (caseResult.error) throw new Error(caseResult.msg);
       setCaseData(caseResult.case);
       await fetchAnalysesByCaseId(caseId);

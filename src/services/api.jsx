@@ -166,6 +166,24 @@ export const getCases = async () => {
     }
 }
 
+export const uploadEvidence = async (evidenceData) => {
+  try {
+    const res = await apiClient.post('/evidences/', evidenceData);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al subir evidencia';
+    return {
+      error: true,
+      msg,
+      e
+    };
+  }
+};
+
 export const updateCase = async (id, data) => {
     try {
         const res = await apiClient.put(`/cases/${id}`, data);

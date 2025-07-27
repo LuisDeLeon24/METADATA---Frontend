@@ -7,7 +7,6 @@ const Cases = () => {
   return (
     <div>
       <Navbar />
-      <h1>Gestión de Casos</h1>
       <CaseManagerAdmin />
       <Footer />
     </div>
