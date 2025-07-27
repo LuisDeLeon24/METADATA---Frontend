@@ -313,18 +313,33 @@ export const getLogs = async () => {
 
 export const createLog = async (logData) => {
   try {
-    const res = await apiClient.post('/logs', logData);
-    return {
-      success: true,
-      status: res.status,
-      data: res.data.log,
-    };
+    const res = await apiClient.post('/evidences/', evidenceData);
+    return res.data; 
   } catch (e) {
-    const msg = e.response?.data?.msg || 'Error desconocido al crear log';
+    const msg = e.response?.data?.message || 'Error al obtener evidencias';
     return {
       error: true,
       msg,
-      e,
+      e
+    };
+  }
+};
+
+
+export const uploadAnalysis = async (analysisData) => {
+  try {
+    const res = await apiClient.post('/analysis/', analysisData);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Error al guardar análisis';
+    return {
+      error: true,
+      msg,
+      e
     };
   }
 };
@@ -388,4 +403,3 @@ export const getAnalysesByResearcher = async (userId) => {
     };
   }
 };
-
