@@ -9,7 +9,6 @@ const CasesPage = lazy(() => import('../pages/Cases.jsx'))
 const DashboardAdmin = lazy(() => import('../pages/DashboardAdmin.jsx'));
 const AnalysisImgPage = lazy(() => import('../pages/AnalysisImgPage'));
 const AnalysisPdfPage = lazy(() => import('../pages/AnalysisPdfPage'));
-
 const Report = lazy(() => import('../components/report/Report.jsx'))
 const LogsAdminPage = lazy(() => import('../pages/LogsPage.jsx'));
 const DashboardSearcherPage = lazy(() => import('../pages/DashboardSearcherPage'));
