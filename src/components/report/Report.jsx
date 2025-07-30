@@ -9,6 +9,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useOpenRouterChat } from '../../shared/hooks/useOpenRouterChat';
 import { useCases } from '../../shared/hooks/useCases';
 import { getCaseById } from '../../services/api';
+import { useReport } from '../../shared/hooks/useReport';
 
 const Report = () => {
   const [searchParams] = useSearchParams();
@@ -17,6 +18,7 @@ const Report = () => {
   const caseId = searchParams.get('caseId');
 
   const { analyses, isLoading: casesLoading, fetchAnalysesByCaseId } = useCases();
+  const { createReport, isLoading: reportLoading } = useReport();
   const { sendMessage, response, loading: aiLoading, error: aiError } = useOpenRouterChat();
 
   const [caseData, setCaseData] = useState(null);
@@ -60,18 +62,18 @@ const Report = () => {
   };
 
   const handleGenerateReport = async () => {
-  try {
-    if (!analyses || analyses.length === 0) {
-      toast({
-        title: 'Sin análisis',
-        description: 'No hay análisis disponibles para generar el reporte.',
-        status: 'warning',
-        duration: 3000,
-      });
-      return;
-    }
+    try {
+      if (!analyses || analyses.length === 0) {
+        toast({
+          title: 'Sin análisis',
+          description: 'No hay análisis disponibles para generar el reporte.',
+          status: 'warning',
+          duration: 3000,
+        });
+        return;
+      }
 
-   const prompt = `Actúa como un analista senior en una unidad de inteligencia digital especializada en vigilancia forense. Tu tarea es redactar un informe técnico confidencial que compile y analice en profundidad una serie de resultados generados por modelos de inteligencia artificial sobre evidencias digitales pertenecientes al mismo caso investigativo.
+      const prompt = `Actúa como un analista senior en una unidad de inteligencia digital especializada en vigilancia forense. Tu tarea es redactar un informe técnico confidencial que compile y analice en profundidad una serie de resultados generados por modelos de inteligencia artificial sobre evidencias digitales pertenecientes al mismo caso investigativo.
 
 Estructura el informe en tres secciones: **Introducción**, **Análisis y Hallazgos**, y **Conclusiones y Recomendaciones**.
 
@@ -87,13 +89,53 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
 
 
 
-    console.log('Prompt:', prompt); // ✅ debería mostrar los textos correctos
-    await sendMessage(prompt);
-    toast({ title: 'Generando reporte', status: 'info', duration: 3000 });
-  } catch (error) {
-    toast({ title: 'Error al generar', description: error.message, status: 'error', duration: 5000 });
-  }
-};
+      console.log('Prompt:', prompt); // ✅ debería mostrar los textos correctos
+      await sendMessage(prompt);
+      toast({ title: 'Generando reporte', status: 'info', duration: 3000 });
+    } catch (error) {
+      toast({ title: 'Error al generar', description: error.message, status: 'error', duration: 5000 });
+    }
+  };
+
+  const handleSaveReport = async () => {
+    try {
+      if (!generatedContent) {
+        toast({
+          title: 'Contenido vacío',
+          description: 'Genera el reporte antes de guardarlo.',
+          status: 'warning',
+          duration: 3000,
+        });
+        return;
+      }
+      const evidenceIds = analyses?.map(a => a.evidenceID).filter(Boolean) || [];
+
+      const data = {
+        caseID: caseId,
+        content: generatedContent,
+        evidence: evidenceIds,  // siempre envía arreglo, aunque vacío
+        confidential: true
+      };
+
+      console.log('Datos para enviar a backend:', data);
+
+      const response = await createReport(data);
+      console.log('Respuesta backend:', response);
+
+      if (response.success) {
+        toast({ title: 'Reporte guardado', status: 'success', duration: 3000 });
+      } else {
+        toast({ title: 'Error', description: response.msg || 'Error desconocido', status: 'error', duration: 5000 });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error al guardar',
+        description: error.message || 'Ocurrió un error al guardar el reporte.',
+        status: 'error',
+        duration: 5000
+      });
+    }
+  };
 
 
   if (loadingData || casesLoading) {
@@ -135,6 +177,11 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
                 <Button colorScheme="purple" onClick={handleGenerateReport} isLoading={aiLoading} size="sm">
                   {generatedContent ? 'Regenerar' : 'Generar'}
                 </Button>
+                {generatedContent && (
+                  <Button colorScheme="green" onClick={handleSaveReport} isLoading={reportLoading} size="sm">
+                    Guardar Reporte
+                  </Button>
+                )}
               </HStack>
 
               {aiError && (
