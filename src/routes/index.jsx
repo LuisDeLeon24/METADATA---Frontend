@@ -23,7 +23,9 @@ const routes = [
   { path: '/cases', element: <CasesPage /> },
   { path: '/analyze', element: <AnalysisImgPage /> },
   { path: '/analyzePdf', element: <AnalysisPdfPage /> },
-  {path: '/report', element: <Report/>},
+  { path: '/report', element: <Report /> },
+  { path: '/admin/logs', element: <LogsAdminPage /> },
+  { path: '/searcher/dashboard', element: <DashboardSearcherPage />}
 
   // {
   //   path: '/user',
@@ -32,20 +34,20 @@ const routes = [
   //     { path: 'dashboard', element: <DashboardUserPage /> }
   //   ]
   // },
-  {
-    path: '/admin',
-    element: <PrivateRoute allowedRoles={['ADMIN']} />,
-    children: [
-      { path: 'logs', element: <LogsAdminPage /> }
-    ]
-  },
-  {
-  path: '/searcher',
-    element: <PrivateRoute allowedRoles={['SEARCHER']} />,
-    children: [
-      { path: 'dashboard', element: <DashboardSearcherPage /> }
-    ]
-  }
+  // {
+  //   path: '/admin/logs/*',
+  //   element: <PrivateRoute allowedRoles={['ADMIN']} />,
+  //   children: [
+  //     { path: '', element: <LogsAdminPage /> }
+  //   ]
+  // },
+  // {
+  //   path: '/searcher/dashboard/*',
+  //   element: <PrivateRoute allowedRoles={['SEARCHER', 'ADMIN']} />,
+  //   children: [
+  //     { path: '', element: <DashboardSearcherPage /> }
+  //   ]
+  // }
 ];
 
 export default routes;
