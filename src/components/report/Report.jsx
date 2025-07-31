@@ -10,6 +10,7 @@ import { useOpenRouterChat } from '../../shared/hooks/useOpenRouterChat';
 import { useCases } from '../../shared/hooks/useCases';
 import { getCaseById } from '../../services/api';
 import { useReport } from '../../shared/hooks/useReport';
+import PdfReport from './PdfReport'; // ✅ Importar el nuevo componente
 
 const Report = () => {
   const [searchParams] = useSearchParams();
@@ -87,9 +88,7 @@ A continuación se presentan los resultados de los modelos de IA, cada uno corre
 
 ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
 
-
-
-      console.log('Prompt:', prompt); // ✅ debería mostrar los textos correctos
+      console.log('Prompt:', prompt);
       await sendMessage(prompt);
       toast({ title: 'Generando reporte', status: 'info', duration: 3000 });
     } catch (error) {
@@ -113,7 +112,7 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
       const data = {
         caseID: caseId,
         content: generatedContent,
-        evidence: evidenceIds,  // siempre envía arreglo, aunque vacío
+        evidence: evidenceIds,
         confidential: true
       };
 
@@ -137,7 +136,6 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
     }
   };
 
-
   if (loadingData || casesLoading) {
     return (
       <Container maxW="7xl" py={8}>
@@ -159,7 +157,7 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
             <IconButton icon={<ArrowBackIcon />} onClick={() => navigate('/cases')} variant="ghost" aria-label="Volver" />
             <VStack align="start">
               <Heading size="lg">Reporte Forense</Heading>
-              <Text color="gray.500">{caseData.title}</Text>
+              <Text color="gray.500">{caseData?.title}</Text>
             </VStack>
           </HStack>
           {generatedContent && (
@@ -173,14 +171,23 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
           <CardHeader><Heading size="md">Reporte</Heading></CardHeader>
           <CardBody>
             <VStack spacing={4} align="stretch">
-              <HStack justify="flex-end">
+              <HStack justify="flex-end" spacing={2}>
                 <Button colorScheme="purple" onClick={handleGenerateReport} isLoading={aiLoading} size="sm">
                   {generatedContent ? 'Regenerar' : 'Generar'}
                 </Button>
                 {generatedContent && (
-                  <Button colorScheme="green" onClick={handleSaveReport} isLoading={reportLoading} size="sm">
-                    Guardar Reporte
-                  </Button>
+                  <>
+                    <Button colorScheme="green" onClick={handleSaveReport} isLoading={reportLoading} size="sm">
+                      Guardar Reporte
+                    </Button>
+                    {/* ✅ Agregar el botón de PDF */}
+                    <PdfReport
+                      caseData={caseData}
+                      generatedContent={generatedContent}
+                      analyses={analyses}
+                      caseId={caseId}
+                    />
+                  </>
                 )}
               </HStack>
 
@@ -218,4 +225,3 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
 };
 
 export default Report;
-
