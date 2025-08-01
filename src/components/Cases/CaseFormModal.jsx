@@ -157,6 +157,12 @@ const CaseFormModal = ({
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formProgress, setFormProgress] = useState(0);
+  const [dateErrors, setDateErrors] = useState({});
+
+  // Obtener fecha actual en formato YYYY-MM-DD
+  const getTodayDate = () => {
+    return new Date().toISOString().split('T')[0];
+  };
 
   // Theme colors
   const bgGradient = useColorModeValue(
@@ -241,7 +247,32 @@ const CaseFormModal = ({
         status: true,
       });
     }
+    // Limpiar errores de fecha al abrir/cerrar modal
+    setDateErrors({});
   }, [initialData, isOpen]);
+
+  // Función para validar fechas
+  const validateDates = (initDate, finishDate) => {
+    const errors = {};
+    const today = getTodayDate();
+    
+    // Validar fecha de inicio
+    if (initDate && initDate < today) {
+      errors.initDate = "La fecha de inicio no puede ser anterior a hoy";
+    }
+    
+    // Validar fecha de finalización
+    if (finishDate) {
+      if (initDate && finishDate < initDate) {
+        errors.finishDate = "La fecha de finalización no puede ser anterior a la fecha de inicio";
+      }
+      if (finishDate < today) {
+        errors.finishDate = "La fecha de finalización no puede ser anterior a hoy";
+      }
+    }
+    
+    return errors;
+  };
 
   // Calculate form progress
   useEffect(() => {
@@ -255,10 +286,23 @@ const CaseFormModal = ({
     const { name, value, type: inputType, checked } = e.target;
     const newValue = inputType === "checkbox" ? checked : value;
     
-    setForm((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
+    setForm((prev) => {
+      const newForm = {
+        ...prev,
+        [name]: newValue,
+      };
+      
+      // Validar fechas cuando cambie initDate o finishDate
+      if (name === 'initDate' || name === 'finishDate') {
+        const errors = validateDates(
+          name === 'initDate' ? newValue : prev.initDate,
+          name === 'finishDate' ? newValue : prev.finishDate
+        );
+        setDateErrors(errors);
+      }
+      
+      return newForm;
+    });
 
     // Auto-set priority based on case type
     if (name === "type" && value) {
@@ -274,6 +318,14 @@ const CaseFormModal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validar fechas antes de enviar
+    const errors = validateDates(form.initDate, form.finishDate);
+    if (Object.keys(errors).length > 0) {
+      setDateErrors(errors);
+      return;
+    }
+    
     onSubmit({
       ...form,
       finishDate: form.finishDate || null,
@@ -292,6 +344,9 @@ const CaseFormModal = ({
   const getSelectedPriorityInfo = () => {
     return priorityOptions.find(opt => opt.value === form.priority);
   };
+
+  // Calcular si el formulario es válido
+  const isFormValid = formProgress >= 100 && Object.keys(dateErrors).length === 0;
 
   return (
     <AnimatePresence>
@@ -550,7 +605,7 @@ const CaseFormModal = ({
 
                   <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                     <GridItem>
-                      <FormControl isRequired>
+                      <FormControl isRequired isInvalid={!!dateErrors.initDate}>
                         <FormLabel color={textColor} fontSize="sm" fontWeight="medium">
                           Fecha de Inicio
                         </FormLabel>
@@ -559,23 +614,29 @@ const CaseFormModal = ({
                           name="initDate"
                           value={form.initDate}
                           onChange={handleChange}
+                          min={getTodayDate()} // No permitir fechas anteriores a hoy
                           borderRadius="xl"
                           focusBorderColor="purple.400"
                           bg={inputBg}
                           border="2px solid"
-                          borderColor="transparent"
-                          _hover={{ borderColor: "purple.200" }}
+                          borderColor={dateErrors.initDate ? "red.300" : "transparent"}
+                          _hover={{ borderColor: dateErrors.initDate ? "red.400" : "purple.200" }}
                           _focus={{ 
-                            borderColor: "purple.400",
-                            boxShadow: "0 0 0 1px purple.400"
+                            borderColor: dateErrors.initDate ? "red.400" : "purple.400",
+                            boxShadow: `0 0 0 1px ${dateErrors.initDate ? "red.400" : "purple.400"}`
                           }}
                           size="lg"
                         />
+                        {dateErrors.initDate && (
+                          <Text fontSize="xs" color="red.500" mt={1}>
+                            {dateErrors.initDate}
+                          </Text>
+                        )}
                       </FormControl>
                     </GridItem>
 
                     <GridItem>
-                      <FormControl>
+                      <FormControl isInvalid={!!dateErrors.finishDate}>
                         <FormLabel color={textColor} fontSize="sm" fontWeight="medium">
                           Fecha de Finalización
                         </FormLabel>
@@ -584,18 +645,29 @@ const CaseFormModal = ({
                           name="finishDate"
                           value={form.finishDate}
                           onChange={handleChange}
+                          min={form.initDate || getTodayDate()} // No permitir fechas anteriores a la fecha de inicio o hoy
                           borderRadius="xl"
                           focusBorderColor="purple.400"
                           bg={inputBg}
                           border="2px solid"
-                          borderColor="transparent"
-                          _hover={{ borderColor: "purple.200" }}
+                          borderColor={dateErrors.finishDate ? "red.300" : "transparent"}
+                          _hover={{ borderColor: dateErrors.finishDate ? "red.400" : "purple.200" }}
                           _focus={{ 
-                            borderColor: "purple.400",
-                            boxShadow: "0 0 0 1px purple.400"
+                            borderColor: dateErrors.finishDate ? "red.400" : "purple.400",
+                            boxShadow: `0 0 0 1px ${dateErrors.finishDate ? "red.400" : "purple.400"}`
                           }}
                           size="lg"
                         />
+                        {dateErrors.finishDate && (
+                          <Text fontSize="xs" color="red.500" mt={1}>
+                            {dateErrors.finishDate}
+                          </Text>
+                        )}
+                        {form.initDate && !dateErrors.finishDate && (
+                          <Text fontSize="xs" color="gray.500" mt={1}>
+                            Debe ser posterior al {new Date(form.initDate).toLocaleDateString('es-ES')}
+                          </Text>
+                        )}
                       </FormControl>
                     </GridItem>
 
@@ -773,7 +845,7 @@ const CaseFormModal = ({
                     variants={buttonVariants}
                     whileHover="hover"
                     whileTap="tap"
-                    isDisabled={formProgress < 100}
+                    isDisabled={!isFormValid}
                     leftIcon={<Icon as={initialData ? ViewIcon : StarIcon} />}
                     px={8}
                   >
