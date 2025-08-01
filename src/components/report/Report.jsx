@@ -217,14 +217,6 @@ ${analyses.map((a, i) => `Evidencia ${i + 1}:\n${a.resultado}`).join('\n\n')}`;
           duration: 3000,
           position: 'top-right'
         });
-      } else {
-        toast({
-          title: 'Error',
-          description: response.msg || 'Error desconocido',
-          status: 'error',
-          duration: 5000,
-          position: 'top-right'
-        });
       }
     } catch (error) {
       toast({
