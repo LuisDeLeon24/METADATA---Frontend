@@ -84,6 +84,7 @@ export const Login = ({ switchAuthHandler }) => {
     const handleLogin = (e) => {
         e.preventDefault();
         login(formState.email.value, formState.password.value);
+        
     };
 
     const isSubmitButtonDisabled = isLoading || !formState.email.isValid || !formState.password.isValid;

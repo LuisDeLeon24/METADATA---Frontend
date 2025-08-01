@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginRequest } from "../../services"
 import toast from "react-hot-toast";
@@ -10,7 +10,7 @@ export const useLogin = () => {
 
     const navigate = useNavigate()
 
-    const { refreshUser } = useContext(UserContext)
+    const { user, refreshUser } = useContext(UserContext)
 
     const login = async (email, password) => {
 
@@ -45,7 +45,13 @@ export const useLogin = () => {
             }
         })
 
-        navigate('/user/dashboard')
+        if(userDetails.role === 'ADMIN'){
+            navigate('/admin/dashboard')
+        }else if(userDetails.role === 'USER'){
+            navigate('/user/dashboard')
+        }else if(userDetails.role === 'SEARCHER'){
+            navigate('/searcher/dashboard')
+        }
 
     }
     return {
