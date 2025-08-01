@@ -100,38 +100,6 @@ const AnalysisList = () => {
     );
   }
 
-  if (analyses.length === 0) {
-    return (
-      <Box
-        minH="100vh"
-        bg="linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          bg="rgba(139, 92, 246, 0.1)"
-          backdropFilter="blur(10px)"
-          border="1px solid"
-          borderColor="purple.500"
-          borderRadius="2xl"
-          p={12}
-          textAlign="center"
-        >
-          <Icon as={FaRobot} boxSize={16} color="purple.400" mb={4} />
-          <Text color="purple.200" fontSize="xl" fontWeight="medium">
-            No hay análisis disponibles
-          </Text>
-          <Text color="gray.400" mt={2}>
-            Comienza creando tu primer análisis
-          </Text>
-        </MotionBox>
-      </Box>
-    );
-  }
-
   return (
     <Box
       minH="100vh"
@@ -150,7 +118,7 @@ const AnalysisList = () => {
         bgImage="radial-gradient(circle at 25% 25%, purple.500 0%, transparent 50%), radial-gradient(circle at 75% 75%, purple.700 0%, transparent 50%)"
       />
 
-      <Container maxW="7xl" py={8} position="relative" zIndex={1}>
+      <Container maxW="7xl" py={40} position="relative" zIndex={1}>
         {/* Header Section */}
         <MotionFlex
           initial={{ opacity: 0, y: -20 }}
@@ -244,21 +212,44 @@ const AnalysisList = () => {
           </HStack>
         </MotionBox>
 
-        {/* Analysis Grid */}
-        <Grid
-          templateColumns={{
-            base: '1fr',
-            md: 'repeat(2, 1fr)',
-            lg: 'repeat(3, 1fr)'
-          }}
-          gap={8}
-        >
-          <AnimatePresence>
-            {analyses.map((analysis, i) => {
-              const isSelected = selectedCardId === analysis._id;
-              return (
-                <MotionCard
-                  key={analysis._id}
+              {/* Si no hay análisis, mostrar mensaje en lugar del Grid */}
+{analyses.length === 0 ? (
+  <MotionBox
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    bg="rgba(139, 92, 246, 0.1)"
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor="purple.500"
+    borderRadius="2xl"
+    p={12}
+    textAlign="center"
+    mb={12}
+  >
+    <Icon as={FaRobot} boxSize={16} color="purple.400" mb={4} />
+    <Text color="purple.200" fontSize="xl" fontWeight="medium">
+      No hay análisis disponibles
+    </Text>
+    <Text color="gray.400" mt={2}>
+      Comienza creando tu primer análisis
+    </Text>
+  </MotionBox>
+) : (
+  <Grid
+    templateColumns={{
+      base: '1fr',
+      md: 'repeat(2, 1fr)',
+      lg: 'repeat(3, 1fr)'
+    }}
+    gap={8}
+  >
+    <AnimatePresence>
+      {analyses.map((analysis, i) => {
+        const isSelected = selectedCardId === analysis._id;
+        return (
+          // 👇 Tu componente MotionCard completo aquí
+          <MotionCard
+            key={analysis._id}
                   layout
                   initial={{ opacity: 0, y: 50, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -293,8 +284,8 @@ const AnalysisList = () => {
                     bg: "linear-gradient(90deg, #8b5cf6, #a855f7, #c084fc)",
                     opacity: isSelected ? 1 : 0.7
                   }}
-                >
-                  <CardHeader pb={4}>
+          >
+            <CardHeader pb={4}>
                     <Flex align="center" justify="space-between">
                       <HStack spacing={3}>
                         <Box
@@ -457,11 +448,13 @@ const AnalysisList = () => {
                       </AnimatePresence>
                     </Stack>
                   </CardBody>
-                </MotionCard>
-              );
-            })}
-          </AnimatePresence>
-        </Grid>
+          </MotionCard>
+        );
+      })}
+    </AnimatePresence>
+  </Grid>
+)}
+
       </Container>
     </Box>
   );
