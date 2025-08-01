@@ -11,7 +11,7 @@ export function useCases() {
       setLoading(true);
       const res = await getCases();
       if (!res.error) {
-        setCases(res.data);
+        setCases(res.cases);
         setError(null);
       } else {
         setError(res.msg);
