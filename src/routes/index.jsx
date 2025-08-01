@@ -12,6 +12,7 @@ const AnalysisPdfPage = lazy(() => import('../pages/AnalysisPdfPage'));
 const Report = lazy(() => import('../components/report/Report.jsx'))
 const LogsAdminPage = lazy(() => import('../pages/LogsPage.jsx'));
 const DashboardSearcherPage = lazy(() => import('../pages/DashboardSearcherPage'));
+const OsintPage = lazy(() => import('../pages/OsintPage.jsx'));
 
 const routes = [
   { path: '/', element: <LandingPage /> },
@@ -24,7 +25,8 @@ const routes = [
   { path: '/analyzePdf', element: <AnalysisPdfPage /> },
   { path: '/report', element: <Report /> },
   { path: '/admin/logs', element: <LogsAdminPage /> },
-  { path: '/searcher/dashboard', element: <DashboardSearcherPage />}
+  { path: '/searcher/dashboard', element: <DashboardSearcherPage />},
+  {path: '/osint', element: <OsintPage /> }
 
   // {
   //   path: '/user',
