@@ -181,6 +181,23 @@ const AnalysisList = () => {
             >
               Analizar PDF
             </Button>
+            <Button
+              leftIcon={<FaFilePdf />}
+              bg="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
+              color="white"
+              size="lg"
+              borderRadius="xl"
+              px={8}
+              py={6}
+              _hover={{
+                transform: "translateY(-2px)",
+                boxShadow: "0 20px 40px rgba(99, 102, 241, 0.3)"
+              }}
+              transition="all 0.3s ease"
+              onClick={() => navigate('/osint')}
+            >
+              OSINT
+            </Button>
           </HStack>
         </MotionFlex>
 
