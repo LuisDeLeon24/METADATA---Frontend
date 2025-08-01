@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
     baseURL: 'https://metadata-backend-a4er.onrender.com/metadata/v1',
-    timeout: 5000
+    timeout: 50000000
 });
 
 apiClient.interceptors.request.use(
@@ -418,6 +418,48 @@ export const getAnalysesByResearcher = async (userId) => {
       error: true,
       msg,
       e
+    };
+  }
+};
+
+export const osint = async (user) => {
+    try {
+        const res = await apiClient.get(`/osint/case/${caseId}`);
+        return {
+            success: res.data.success,
+            data: res.data.data, // Según tu backend usa res.data.data
+            status: res.status
+        };
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.message || "Error al obtener el reporte del caso",
+            e: error
+        }
+    }
+}
+
+export const analyzeSocialUser = async (username) => {
+  try {
+    const res = await apiClient.post('/osint/social-analyzer', { username });
+    console.log('Respuesta API:', res);
+    return {
+      success: true,
+      data: res.data,
+      status: res.status
+    };
+  } catch (error) {
+    console.error('Error completo analyzeSocialUser:', error);
+    console.error('Error response data:', error.response?.data);
+    const msg = 
+      error.response?.data?.error || 
+      error.response?.data?.msg || 
+      error.message || 
+      'Error al ejecutar el análisis social api';
+    return {
+      error: true,
+      msg,
+      e: error
     };
   }
 };
