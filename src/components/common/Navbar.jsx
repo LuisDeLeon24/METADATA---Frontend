@@ -27,7 +27,7 @@ const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { user, refreshUser } = useContext(UserContext)
 
-  console.log(user);
+  // console.log(user);
 
 
   useEffect(() => {
