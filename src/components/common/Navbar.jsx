@@ -30,9 +30,6 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  // console.log(user);
-
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -99,9 +96,9 @@ const Navbar = () => {
           {/* Logo Mejorado */}
           <Box
             as='Button'
-          onClick={() => {
-            handleDashboard();
-          }}
+            onClick={() => {
+              handleDashboard();
+            }}
           >
 
             <MotionFlex
@@ -173,6 +170,13 @@ const Navbar = () => {
             <Link to={'/user/Dashboard'}>
               <NavButton>Ver evidencias</NavButton>
             </Link>
+            {user?.role === 'ADMIN' ? (
+              <Link to={'/users'}>
+                <NavButton>Ver usuarios</NavButton>
+              </Link>
+            ) : (
+              ''
+            )}
 
             {!user?.role ? (
               <Link to='/Login'>
