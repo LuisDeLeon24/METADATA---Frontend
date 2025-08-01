@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
         }
 
         axios
-            .get('http://127.0.0.1:3000/metadata/v1/users/profile', {
+            .get('https://metadata-backend-a4er.onrender.com/metadata/v1/users/profile', {
                 headers: { 'x-token': token }
             })
             .then((res) => {
