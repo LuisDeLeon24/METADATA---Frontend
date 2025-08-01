@@ -12,6 +12,7 @@ import {
   Collapse,
   Badge
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { BrainCog, Menu, X, Sparkles, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,6 +27,8 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
   const { user, refreshUser } = useContext(UserContext)
+
+  const navigate = useNavigate();
 
   // console.log(user);
 
@@ -42,6 +45,16 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     refreshUser();
+  }
+
+  const handleDashboard = () => {
+    if (user?.role === 'ADMIN') {
+      navigate('/admin/dashboard');
+    } else if (user?.role === 'USER') {
+      navigate('/user/dashboard')
+    } else if (user?.role === 'SEARCHER') {
+      navigate('/searcher/dashboard')
+    }
   }
 
   return (
@@ -78,45 +91,55 @@ const Navbar = () => {
       }}
     >
       <Container maxW="container.xl">
-        <Flex py={4} align="center" justify="space-between">
+        <Flex
+          py={4}
+          align="center"
+          justify="space-between"
+        >
           {/* Logo Mejorado */}
-          <MotionFlex
-            align="center"
-            cursor="pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          <Box
+            as='Button'
+          onClick={() => {
+            handleDashboard();
+          }}
           >
-            <MotionBox
-              p={3}
-              bg="linear-gradient(135deg, #9333ea, #7c3aed, #6366f1)"
-              borderRadius="2xl"
-              color="white"
-              mr={3}
-              position="relative"
-              whileHover={{
-                boxShadow: "0 0 30px rgba(147, 51, 234, 0.6), 0 0 60px rgba(147, 51, 234, 0.3)",
-                rotate: [0, -5, 5, 0]
-              }}
-              transition={{ duration: 0.6 }}
-              _before={{
-                content: '""',
-                position: 'absolute',
-                top: '-2px',
-                left: '-2px',
-                right: '-2px',
-                bottom: '-2px',
-                background: 'linear-gradient(45deg, #9333ea, #7c3aed, #6366f1, #9333ea)',
-                borderRadius: '2xl',
-                zIndex: -1,
-                opacity: 0.7,
-                filter: 'blur(8px)'
-              }}
+
+            <MotionFlex
+              align="center"
+              cursor="pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <BrainCog size={28} />
-            </MotionBox>
-            <VStack spacing={0} align="start">
-              <Link to="/">
+              <MotionBox
+                p={3}
+                bg="linear-gradient(135deg, #9333ea, #7c3aed, #6366f1)"
+                borderRadius="2xl"
+                color="white"
+                mr={3}
+                position="relative"
+                whileHover={{
+                  boxShadow: "0 0 30px rgba(147, 51, 234, 0.6), 0 0 60px rgba(147, 51, 234, 0.3)",
+                  rotate: [0, -5, 5, 0]
+                }}
+                transition={{ duration: 0.6 }}
+                _before={{
+                  content: '""',
+                  position: 'absolute',
+                  top: '-2px',
+                  left: '-2px',
+                  right: '-2px',
+                  bottom: '-2px',
+                  background: 'linear-gradient(45deg, #9333ea, #7c3aed, #6366f1, #9333ea)',
+                  borderRadius: '2xl',
+                  zIndex: -1,
+                  opacity: 0.7,
+                  filter: 'blur(8px)'
+                }}
+              >
+                <BrainCog size={28} />
+              </MotionBox>
+              <VStack spacing={0} align="start">
                 <Text
                   fontSize="2xl"
                   fontWeight="900"
@@ -128,17 +151,18 @@ const Navbar = () => {
                 >
                   MetaData
                 </Text>
-              </Link>
-              <Text
-                fontSize="xs"
-                color="purple.300"
-                fontWeight="500"
-                letterSpacing="wide"
-              >
-                AI POWERED
-              </Text>
-            </VStack>
-          </MotionFlex>
+
+                <Text
+                  fontSize="xs"
+                  color="purple.300"
+                  fontWeight="500"
+                  letterSpacing="wide"
+                >
+                  AI POWERED
+                </Text>
+              </VStack>
+            </MotionFlex>
+          </Box>
 
           {/* Desktop Navigation Mejorado */}
           <HStack spacing={2} display={{ base: 'none', md: 'flex' }}>
