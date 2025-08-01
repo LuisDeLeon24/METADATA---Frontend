@@ -27,7 +27,7 @@ const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { user, refreshUser } = useContext(UserContext)
 
-  console.log(user);
+  // console.log(user);
 
 
   useEffect(() => {
@@ -116,16 +116,19 @@ const Navbar = () => {
               <BrainCog size={28} />
             </MotionBox>
             <VStack spacing={0} align="start">
-              <Text
-                fontSize="2xl"
-                fontWeight="900"
-                bgGradient="linear(to-r, #ffffff, #e5e5e5, #9333ea)"
-                bgClip="text"
-                letterSpacing="tight"
-                lineHeight="1"
-              >
-                MetaData
-              </Text>
+              <Link to="/">
+                <Text
+                  fontSize="2xl"
+                  fontWeight="900"
+                  bgGradient="linear(to-r, #ffffff, #e5e5e5, #9333ea)"
+                  bgClip="text"
+                  letterSpacing="tight"
+                  lineHeight="1"
+                  cursor="pointer"
+                >
+                  MetaData
+                </Text>
+              </Link>
               <Text
                 fontSize="xs"
                 color="purple.300"
@@ -139,11 +142,12 @@ const Navbar = () => {
 
           {/* Desktop Navigation Mejorado */}
           <HStack spacing={2} display={{ base: 'none', md: 'flex' }}>
-            <NavButton icon={<Sparkles size={16} />}>Features</NavButton>
-            <NavButton icon={<Zap size={16} />}>How It Works</NavButton>
-            <NavButton icon={<Shield size={16} />}>Pricing</NavButton>
+
             <Link to={'/cases'}>
               <NavButton>Casos</NavButton>
+            </Link>
+            <Link to={'/user/Dashboard'}>
+              <NavButton>Ver evidencias</NavButton>
             </Link>
 
             {!user?.role ? (
