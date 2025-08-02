@@ -6,7 +6,7 @@ import Features from '../components/LandingPage/Features';
 import HowItWorks from '../components/LandingPage/HowItWorks';
 import CTASection from '../components/LandingPage/CTASection';
 import Footer from '../components/LandingPage/Footer';
-import NavBar from '../components/common/NavBar';
+import NavBar from '../components/common/Navbar';
 
 const LandingPage = () => {
     return (
