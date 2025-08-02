@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 
 export function useOpenRouterChat() {
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export function useOpenRouterChat() {
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'http://localhost:3000', // opcional
+          'HTTP-Referer': 'http://localhost:5173', // opcional
           'X-Title': 'METADATA', // opcional
         },
         body: JSON.stringify({
