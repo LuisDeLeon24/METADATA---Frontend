@@ -78,6 +78,24 @@ export const getUsers = async () => {
     }
 }
 
+export const updateUsers = async (id, data) => {
+    try {
+        const res = await apiClient.put(`/users/${id}`, data);
+        return {
+            success: true,
+            users: res.data.users,
+            status: res.status
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error desconocido al obtener usuarios';
+        return {
+            error: true,
+            msg,
+            e
+        };
+    }
+}
+
 export const getAnalyses = async () => {
     try {
         const res = await apiClient.get('/analysis/');
