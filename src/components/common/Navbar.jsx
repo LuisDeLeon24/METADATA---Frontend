@@ -171,6 +171,9 @@ const Navbar = () => {
               <NavButton>Casos</NavButton>
             </Link>
             <Link to={'/user/Dashboard'}>
+              <NavButton>Ver analisis</NavButton>
+            </Link>
+            <Link to={'/evidence'}>
               <NavButton>Ver evidencias</NavButton>
             </Link>
 
