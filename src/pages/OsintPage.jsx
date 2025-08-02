@@ -3,7 +3,7 @@ import { Box, Flex, Heading, Input, Button, Text, Container } from '@chakra-ui/r
 import { motion } from 'framer-motion';
 import { useAnalyzeSocialUser } from '../shared/hooks'; 
 import Footer from '../components/LandingPage/Footer';
-import NavBar from '../components/common/NavBar';
+import NavBar from '../components/common/Navbar';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
