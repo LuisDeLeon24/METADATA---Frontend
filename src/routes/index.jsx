@@ -33,27 +33,7 @@ const routes = [
   { path: '/osint', element: <OsintPage /> },
   { path: '/users', element: <UserListComponent /> }
 
-  // {
-  //   path: '/user',
-  //   element: <PrivateRoute allowedRoles={['USER', 'ADMIN', 'SEARCHER']} />,
-  //   children: [
-  //     { path: 'dashboard', element: <DashboardUserPage /> }
-  //   ]
-  // },
-  // {
-  //   path: '/admin/logs/*',
-  //   element: <PrivateRoute allowedRoles={['ADMIN']} />,
-  //   children: [
-  //     { path: '', element: <LogsAdminPage /> }
-  //   ]
-  // },
-  // {
-  //   path: '/searcher/dashboard/*',
-  //   element: <PrivateRoute allowedRoles={['SEARCHER', 'ADMIN']} />,
-  //   children: [
-  //     { path: '', element: <DashboardSearcherPage /> }
-  //   ]
-  // }
+ 
 ];
 
 export default routes;
